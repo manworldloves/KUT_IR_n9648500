@@ -40,7 +40,7 @@ namespace KUT_IR_n9648500
         private void btnCreateIndex_Click(object sender, EventArgs e)
         {
             // this code needs to be moved - it shouldn't sit in the form class
-            List<string> filenames = FileHandling.GetFileNames(collectionFolder);
+            List<string> filenames = FileHandling.GetFileNames(collectionFolder, false);
             List<string> documents = new List<string>();
 
             foreach (string fn in filenames)

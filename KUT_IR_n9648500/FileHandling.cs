@@ -25,7 +25,7 @@ namespace KUT_IR_n9648500
             
             return text;
         }
-        public static List<string> GetFileNames(String path)
+        public static List<string> GetFileNames(String path, bool recursiveDir)
         {
             System.IO.DirectoryInfo root = new System.IO.DirectoryInfo(path);
             System.IO.FileInfo[] files = null;
@@ -58,15 +58,19 @@ namespace KUT_IR_n9648500
                     //OutputFileDetails(name);
                 }
 
-                // Now find all the subdirectories under this directory.
-                subDirs = root.GetDirectories();
-
-                foreach (System.IO.DirectoryInfo dirInfo in subDirs)
+                if (recursiveDir)
                 {
-                    // Resursive call for each subdirectory.
-                    string name = dirInfo.FullName;
-                    filenames.AddRange(GetFileNames(name));
+					// Now find all the subdirectories under this directory.
+					subDirs = root.GetDirectories();
+
+					foreach (System.IO.DirectoryInfo dirInfo in subDirs)
+					{
+						// Resursive call for each subdirectory.
+						string name = dirInfo.FullName;
+						filenames.AddRange(GetFileNames(name, true));
+					}  
                 }
+
             }
 
             return filenames;
