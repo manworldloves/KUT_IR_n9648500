@@ -25,6 +25,7 @@ namespace KUT_IR_n9648500
 		const Lucene.Net.Util.Version VERSION = Lucene.Net.Util.Version.LUCENE_30;
 		const string TEXT_FN = "Text";
 
+        // class constructor
         public LuceneIREngine()
         {
 			luceneIndexDirectory = null;
@@ -35,6 +36,8 @@ namespace KUT_IR_n9648500
 			parser = new QueryParser(Lucene.Net.Util.Version.LUCENE_30, TEXT_FN, analyzer);
         }
 
+        // helper function for CreateIndex()
+        // sets up lucene index ready for adding documents
 		private void InitIndex(string indexPath)
 		{
 			luceneIndexDirectory = Lucene.Net.Store.FSDirectory.Open(indexPath);
@@ -43,6 +46,8 @@ namespace KUT_IR_n9648500
 			//writer.SetSimilarity(newSimilarity);
 		}
 
+        // helper function for CreateIndex()
+        // adds document to the index
 		private void IndexText(string fieldName, string text)
 		{
 			Lucene.Net.Documents.Field field = new Field(fieldName, text, Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.YES);
@@ -50,14 +55,16 @@ namespace KUT_IR_n9648500
 			doc.Add(field);
 			writer.AddDocument(doc);
 		}
-
-		private void CleanUpIndexer()
+        // helper funciton for CreateIndex()
+		private void CleanUpIndex()
 		{
 			writer.Optimize();
 			writer.Flush(true, true, true);
 			writer.Dispose();
 		}
 
+        // opens all of the files in a list 
+        // and puts the contents of each file into a list
         private List<string> OpenCollectionFiles(List<string> fileNames)
         {
         	List<string> documents = new List<string>();
@@ -76,7 +83,6 @@ namespace KUT_IR_n9648500
         	}
 
             return documents;
-
         }
 
         public int CreateIndex(string collectionPath, string indexPath)
@@ -103,11 +109,11 @@ namespace KUT_IR_n9648500
             //loop through text collectionDocs and add to index
             foreach (JournalAbstract doc in collectionDocs)
             {
-                IndexText("words", doc.words);
+                IndexText("words", doc.GetWords());
             }
 
             // close the index
-            CleanUpIndexer();
+            CleanUpIndex();
 
             // end timer and calculate total time
             DateTime end = System.DateTime.Now;

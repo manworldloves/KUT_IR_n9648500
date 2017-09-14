@@ -12,7 +12,7 @@ namespace KUT_IR_n9648500
         private string title;
         private string author;
         private string biblioInfo;
-        public string words;
+        private string words;
 
         public JournalAbstract(string document)
         {
@@ -26,6 +26,11 @@ namespace KUT_IR_n9648500
             
             // title is also part of words - strip it out
             words = docParts[5].Substring(title.Length);
+        }
+
+        public string GetWords()
+        {
+            return words;
         }
 
         override public string ToString()
