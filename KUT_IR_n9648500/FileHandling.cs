@@ -36,7 +36,8 @@ namespace KUT_IR_n9648500
             // First, process all the files directly under this folder 
             try
             {
-                files = root.GetFiles("*.*");
+                // only get txt files
+                files = root.GetFiles("*.txt");
             }
 
             catch (UnauthorizedAccessException e)

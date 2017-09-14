@@ -63,6 +63,7 @@ namespace KUT_IR_n9648500
             }
 
             System.Diagnostics.Debug.WriteLine(allAbstracts[0]);
+            System.Diagnostics.Debug.WriteLine("number of docs: " + allAbstracts.Count);
         }
 
         private void checkEnableCreateIndex()
