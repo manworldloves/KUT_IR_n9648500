@@ -12,7 +12,7 @@ namespace KUT_IR_n9648500
         private string title;
         private string author;
         private string biblioInfo;
-        private string words;
+        public string words;
 
         public JournalAbstract(string document)
         {

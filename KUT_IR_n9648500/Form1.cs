@@ -15,6 +15,9 @@ namespace KUT_IR_n9648500
     public partial class frmIndex : Form
     {
         private string collectionFolder, indexFolder;
+
+        LuceneIREngine myIREngine = new LuceneIREngine();
+
         public frmIndex()
         {
             InitializeComponent();
@@ -39,31 +42,46 @@ namespace KUT_IR_n9648500
 
         private void btnCreateIndex_Click(object sender, EventArgs e)
         {
-            // this code needs to be moved - it shouldn't sit in the form class
-            List<string> filenames = FileHandling.GetFileNames(collectionFolder, false);
-            List<string> documents = new List<string>();
+            int success = myIREngine.CreateIndex(collectionFolder, indexFolder);
 
-            foreach (string fn in filenames)
+            float indexTime;
+            if (success == 0)
             {
-                string document = FileHandling.ReadTextFile(fn);
-                if (document != "")
-                {
-                    documents.Add(document);
-                }
-                else
-                {
-                    MessageBox.Show("Problem opening file:\n\n" + fn);
-                }
+                indexTime = myIREngine.indexTime;
+                MessageBox.Show("Index created successfully!\nTime to index: "
+                                + indexTime + " msec");
+            }
+            else
+            {
+                MessageBox.Show("There was a problem creating the index.\n" 
+                               + "Try again.");
             }
 
-            List<JournalAbstract> allAbstracts = new List<JournalAbstract>();
-            foreach (string doc in documents)
-            {
-                allAbstracts.Add(new JournalAbstract(doc));
-            }
+            //// this code needs to be moved - it shouldn't sit in the form class
+            //List<string> filenames = FileHandling.GetFileNames(collectionFolder, false);
+            //List<string> documents = new List<string>();
 
-            System.Diagnostics.Debug.WriteLine(allAbstracts[0]);
-            System.Diagnostics.Debug.WriteLine("number of docs: " + allAbstracts.Count);
+            //foreach (string fn in filenames)
+            //{
+            //    string document = FileHandling.ReadTextFile(fn);
+            //    if (document != "")
+            //    {
+            //        documents.Add(document);
+            //    }
+            //    else
+            //    {
+            //        MessageBox.Show("Problem opening file:\n\n" + fn);
+            //    }
+            //}
+
+            //List<JournalAbstract> allAbstracts = new List<JournalAbstract>();
+            //foreach (string doc in documents)
+            //{
+            //    allAbstracts.Add(new JournalAbstract(doc));
+            //}
+
+            //System.Diagnostics.Debug.WriteLine(allAbstracts[0]);
+            //System.Diagnostics.Debug.WriteLine("number of docs: " + allAbstracts.Count);
         }
 
         private void checkEnableCreateIndex()
