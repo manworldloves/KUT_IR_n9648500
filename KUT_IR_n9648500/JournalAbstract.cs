@@ -53,6 +53,16 @@ namespace KUT_IR_n9648500
 			writer.AddDocument(doc);
         }
 
+        public override IDictionary<string, float> GetQuerySettings()
+        {
+            IDictionary<string, float> querySettings = new Dictionary<string, float>{};
+
+            querySettings.Add("title", 2.5f);
+            querySettings.Add("words", 1.0f);
+
+            return querySettings;
+        }
+
         override public string ToString()
         {
             string outString = "";

@@ -22,9 +22,11 @@ namespace KUT_IR_n9648500
 
         public float indexTime;
 
+        private IRCollection collection;
+
 		const Lucene.Net.Util.Version VERSION = Lucene.Net.Util.Version.LUCENE_30;
 
-        // class constructor
+        /// class constructor
         public LuceneIREngine()
         {
 			luceneIndexDirectory = null;
@@ -32,10 +34,9 @@ namespace KUT_IR_n9648500
 			//ISet<string> stopWords = StopAnalyzer.ENGLISH_STOP_WORDS_SET;
 			//analyzer = new SnowballAnalyzer(VERSION, "English", stopWords);
 			analyzer = new Lucene.Net.Analysis.Standard.StandardAnalyzer(VERSION);
-			//parser = new QueryParser(Lucene.Net.Util.Version.LUCENE_30, TEXT_FN, analyzer);
         }
 
-        // helper function for CreateIndex()
+        /// helper function for CreateIndex()
         // sets up lucene index ready for adding documents
 		private void InitIndex(string indexPath)
 		{
@@ -45,7 +46,7 @@ namespace KUT_IR_n9648500
 			//writer.SetSimilarity(newSimilarity);
 		}
 
-        // helper funciton for CreateIndex()
+        /// helper funciton for CreateIndex()
 		private void CleanUpIndex()
 		{
 			writer.Optimize();
@@ -53,9 +54,10 @@ namespace KUT_IR_n9648500
 			writer.Dispose();
 		}
 
-        // opens all of the files in a list 
-        // and puts the contents of each file into a list
-        private List<string> OpenCollectionFiles(List<string> fileNames)
+		/// helper funciton for CreateIndex()
+		// opens all of the files in a list 
+		// and puts the contents of each file into a list
+		private List<string> OpenCollectionFiles(List<string> fileNames)
         {
         	List<string> documents = new List<string>();
 
@@ -87,7 +89,7 @@ namespace KUT_IR_n9648500
             List<string> collectionText = OpenCollectionFiles(filenames);
 
             // turn the raw text into a Collection of objects
-            IRCollection collection = new IRCollection(collectionText);
+            collection = new IRCollection(collectionText);
 
             // initialise the index
             InitIndex(indexPath);
@@ -104,6 +106,66 @@ namespace KUT_IR_n9648500
             indexTime = duration.Milliseconds;
 
             return 0;
+        }
+
+        /// helper function for RunQuery()
+        // create the searcher object
+		private void CreateSearcher()
+		{
+			searcher = new IndexSearcher(luceneIndexDirectory);
+			//searcher.Similarity = newSimilarity;
+		}
+
+		/// helper function for RunQuery()
+		// execute the query
+		private void SearchText(string querytext)
+		{
+
+			System.Console.WriteLine("Searching for " + querytext);
+			querytext = querytext.ToLower();
+			Query query = parser.Parse(querytext);
+
+			TopDocs results = searcher.Search(query, 100);
+			System.Console.WriteLine("Number of results is " + results.TotalHits);
+			int rank = 0;
+			foreach (ScoreDoc scoreDoc in results.ScoreDocs)
+			{
+				rank++;
+				Lucene.Net.Documents.Document doc = searcher.Doc(scoreDoc.Doc);
+				string myFieldValue = doc.Get("title").ToString();
+				Console.WriteLine("Rank " + rank + " text " + myFieldValue +
+								  ". Score: (" + scoreDoc.Score + ")");
+
+				Explanation exp = searcher.Explain(query, scoreDoc.Doc);
+				Console.WriteLine(exp);
+
+			}
+		}
+
+		/// helper function for RunQuery()
+		// closes the index after searching
+		private void CleanUpSearcher()
+		{
+			searcher.Dispose();
+		}
+
+        public void RunQuery(string text)
+        {
+            CreateSearcher();
+
+            // get the query settings from the collection
+            IDictionary<string, float> queryBoosts = collection.GetQuerySettings();
+            string[] queryFields = queryBoosts.Keys as string[];
+
+            /// other options...
+            // DefaultOperator - AND / OR
+            // BooleanQuery - combine queries in different ways
+
+            parser = new MultiFieldQueryParser(Lucene.Net.Util.Version.LUCENE_30, queryFields, analyzer);
+
+            SearchText(text);
+
+            CleanUpSearcher();
         }
     }
 }
