@@ -23,7 +23,6 @@ namespace KUT_IR_n9648500
         public float indexTime;
 
 		const Lucene.Net.Util.Version VERSION = Lucene.Net.Util.Version.LUCENE_30;
-		const string TEXT_FN = "Text";
 
         // class constructor
         public LuceneIREngine()
@@ -33,7 +32,7 @@ namespace KUT_IR_n9648500
 			//ISet<string> stopWords = StopAnalyzer.ENGLISH_STOP_WORDS_SET;
 			//analyzer = new SnowballAnalyzer(VERSION, "English", stopWords);
 			analyzer = new Lucene.Net.Analysis.Standard.StandardAnalyzer(VERSION);
-			parser = new QueryParser(Lucene.Net.Util.Version.LUCENE_30, TEXT_FN, analyzer);
+			//parser = new QueryParser(Lucene.Net.Util.Version.LUCENE_30, TEXT_FN, analyzer);
         }
 
         // helper function for CreateIndex()
@@ -46,15 +45,6 @@ namespace KUT_IR_n9648500
 			//writer.SetSimilarity(newSimilarity);
 		}
 
-        // helper function for CreateIndex()
-        // adds document to the index
-		private void IndexText(string fieldName, string text)
-		{
-			Lucene.Net.Documents.Field field = new Field(fieldName, text, Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.YES);
-			Lucene.Net.Documents.Document doc = new Document();
-			doc.Add(field);
-			writer.AddDocument(doc);
-		}
         // helper funciton for CreateIndex()
 		private void CleanUpIndex()
 		{
@@ -96,21 +86,14 @@ namespace KUT_IR_n9648500
             // get the text from all of the files
             List<string> collectionText = OpenCollectionFiles(filenames);
 
-            // turn the raw text into JournalAbstract objects
-            List<JournalAbstract> collectionDocs = new List<JournalAbstract>();
-			foreach (string text in collectionText)
-			{
-				collectionDocs.Add(new JournalAbstract(text));
-			}
+            // turn the raw text into a Collection of objects
+            IRCollection collection = new IRCollection(collectionText);
 
             // initialise the index
             InitIndex(indexPath);
 
-            //loop through text collectionDocs and add to index
-            foreach (JournalAbstract doc in collectionDocs)
-            {
-                IndexText("words", doc.GetWords());
-            }
+            // build the index
+            collection.IndexCollection(writer);
 
             // close the index
             CleanUpIndex();

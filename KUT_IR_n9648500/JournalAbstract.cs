@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Lucene.Net.Documents;
 
 namespace KUT_IR_n9648500
 {
-    class JournalAbstract
+    class JournalAbstract : IRDocument
     {
         private string docID;
         private string title;
@@ -28,9 +29,28 @@ namespace KUT_IR_n9648500
             words = docParts[5].Substring(title.Length);
         }
 
-        public string GetWords()
+        public override void AddToIndex(Lucene.Net.Index.IndexWriter writer)
         {
-            return words;
+			// Custom add to index method for JournalAbstract class
+            Field fieldID = new Field("docID", docID, Field.Store.YES, 
+                                            Field.Index.NOT_ANALYZED, Field.TermVector.NO);
+			Field fieldTitle = new Field("title", title, Field.Store.YES,
+							                Field.Index.ANALYZED, Field.TermVector.NO);
+			Field fieldAuthor = new Field("author", author, Field.Store.YES,
+								            Field.Index.NOT_ANALYZED, Field.TermVector.NO);
+			Field fieldBibInfo = new Field("biblioInfo", biblioInfo, Field.Store.YES,
+								            Field.Index.NOT_ANALYZED, Field.TermVector.NO);
+            Field fieldWords = new Field("words", words, Field.Store.YES,
+								            Field.Index.ANALYZED, Field.TermVector.YES);
+
+			Document doc = new Document();
+			doc.Add(fieldID);
+            doc.Add(fieldTitle);
+            doc.Add(fieldAuthor);
+            doc.Add(fieldBibInfo);
+            doc.Add(fieldWords);
+
+			writer.AddDocument(doc);
         }
 
         override public string ToString()

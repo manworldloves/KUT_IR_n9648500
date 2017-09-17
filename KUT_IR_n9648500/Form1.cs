@@ -22,7 +22,12 @@ namespace KUT_IR_n9648500
         {
             InitializeComponent();
             btnCreateIndex.Enabled = false;
-        }
+
+            // YOU NEED TO REMOVE THIS - JUST TO SPEED UP TESTING //
+            collectionFolder = @"/Users/nathan/collection";
+            indexFolder = @"/Users/nathan/index";
+            btnCreateIndex.Enabled = true;
+		}
 
         private void btnCollection_Click(object sender, EventArgs e)
         {

@@ -80,6 +80,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="LuceneIREngine.cs" />
+    <Compile Include="IRDocument.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
