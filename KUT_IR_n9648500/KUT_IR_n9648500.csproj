@@ -54,6 +54,12 @@
     <Compile Include="frmQuery.Designer.cs">
       <DependentUpon>frmQuery.cs</DependentUpon>
     </Compile>
+    <Compile Include="frmResults.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmResults.Designer.cs">
+      <DependentUpon>frmResults.cs</DependentUpon>
+    </Compile>
     <Compile Include="JournalAbstract.cs" />
     <Compile Include="FileHandling.cs" />
     <Compile Include="Form1.cs">
@@ -69,6 +75,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmQuery.resx">
       <DependentUpon>frmQuery.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmResults.resx">
+      <DependentUpon>frmResults.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

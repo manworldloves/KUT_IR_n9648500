@@ -8,21 +8,30 @@ namespace KUT_IR_n9648500
     abstract class IRDocument
     {
         public abstract void AddToIndex(Lucene.Net.Index.IndexWriter writer);
-        public abstract IDictionary<string, float> GetQuerySettings();
+        public abstract IDictionary<string, float> GetQueryParams();
     }
 
     class IRCollection
     {
         private List<IRDocument> collectionDocs;
 
+        /// <summary>
+        /// Builds a custom document and returns it.
+        /// Change the constructor below. eg JournalAbstract
+        /// </summary>
+        /// <returns>The document type.</returns>
+        /// <param name="text">Text.</param>
+        private IRDocument CustomDocType(string text)
+        {
+            return new JournalAbstract(text);
+        }
+
         public IRCollection(List<String> collectionText)
         {
             List<IRDocument> collection = new List<IRDocument>();
             foreach (string text in collectionText)
             {
-                // choose which type of source doc type here eg JournalAbstract
-                // change the constructor used here for other doc types.
-                collection.Add(new JournalAbstract(text));
+                collection.Add(CustomDocType(text));
             }
 
             collectionDocs = collection;
@@ -36,9 +45,9 @@ namespace KUT_IR_n9648500
             }    
         }
 
-        public IDictionary<string, float> GetQuerySettings()
+        public IDictionary<string, float> GetQueryParams()
         {
-            return collectionDocs[0].GetQuerySettings();
+            return collectionDocs[0].GetQueryParams();
         }
     }
 

@@ -43,6 +43,7 @@
             this.chkProcess.TabIndex = 0;
             this.chkProcess.Text = "Preprocess Query";
             this.chkProcess.UseVisualStyleBackColor = true;
+            this.chkProcess.CheckedChanged += new System.EventHandler(this.chkProcess_CheckedChanged);
             // 
             // txtQuery
             // 
@@ -67,6 +68,7 @@
             this.btnQuery.TabIndex = 3;
             this.btnQuery.Text = "Search";
             this.btnQuery.UseVisualStyleBackColor = true;
+            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
             // 
             // frmQuery
             // 
@@ -78,7 +80,7 @@
             this.Controls.Add(this.txtQuery);
             this.Controls.Add(this.chkProcess);
             this.Name = "frmQuery";
-            this.Text = "frmQuery";
+            this.Text = "Submit Query";
             this.ResumeLayout(false);
             this.PerformLayout();
 

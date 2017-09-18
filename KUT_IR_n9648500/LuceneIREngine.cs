@@ -22,7 +22,8 @@ namespace KUT_IR_n9648500
 
         public float indexTime;
 
-        private IRCollection collection;
+        // things to get from collection that is not indexed
+        IDictionary<string, float> queryParams;
 
 		const Lucene.Net.Util.Version VERSION = Lucene.Net.Util.Version.LUCENE_30;
 
@@ -89,7 +90,10 @@ namespace KUT_IR_n9648500
             List<string> collectionText = OpenCollectionFiles(filenames);
 
             // turn the raw text into a Collection of objects
-            collection = new IRCollection(collectionText);
+            IRCollection collection = new IRCollection(collectionText);
+
+            // get the query parameters of the collection (to be used later)
+            queryParams = collection.GetQueryParams();
 
             // initialise the index
             InitIndex(indexPath);
@@ -154,14 +158,14 @@ namespace KUT_IR_n9648500
             CreateSearcher();
 
             // get the query settings from the collection
-            IDictionary<string, float> queryBoosts = collection.GetQuerySettings();
-            string[] queryFields = queryBoosts.Keys as string[];
+            string[] queryFields = queryParams.Keys as string[];
 
             /// other options...
             // DefaultOperator - AND / OR
             // BooleanQuery - combine queries in different ways
 
-            parser = new MultiFieldQueryParser(Lucene.Net.Util.Version.LUCENE_30, queryFields, analyzer);
+            parser = new MultiFieldQueryParser(Lucene.Net.Util.Version.LUCENE_30, 
+                                               queryFields, analyzer, queryParams);
 
             SearchText(text);
 
