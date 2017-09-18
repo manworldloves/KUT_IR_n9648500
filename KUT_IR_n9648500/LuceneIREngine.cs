@@ -22,6 +22,7 @@ namespace KUT_IR_n9648500
 		Lucene.Net.QueryParsers.QueryParser parser;
 
         public float indexTime;
+        public float queryTime;
 
         // things to get from collection that is not indexed
         IDictionary<string, float> queryParams;
@@ -108,7 +109,7 @@ namespace KUT_IR_n9648500
             // end timer and calculate total time
             DateTime end = System.DateTime.Now;
             TimeSpan duration = end - start;
-            indexTime = duration.Milliseconds;
+            indexTime = duration.Seconds + (float)duration.Milliseconds/1000;
 
             return 0;
         }
@@ -123,7 +124,7 @@ namespace KUT_IR_n9648500
 
 		/// helper function for RunQuery()
 		// execute the query
-		private void SearchText(string querytext)
+		private TopDocs SearchText(string querytext)
 		{
 
 			//System.Console.WriteLine("Searching for " + querytext);
@@ -131,6 +132,12 @@ namespace KUT_IR_n9648500
 			Query query = parser.Parse(querytext);
 
 			TopDocs results = searcher.Search(query, 100);
+
+            return results;
+		}
+
+        public void DisplaySearchResults(TopDocs results)
+        {
 			MessageBox.Show("Number of results is " + results.TotalHits);
 			int rank = 0;
 			foreach (ScoreDoc scoreDoc in results.ScoreDocs)
@@ -139,20 +146,19 @@ namespace KUT_IR_n9648500
 				Lucene.Net.Documents.Document doc = searcher.Doc(scoreDoc.Doc);
 				string myFieldValue = doc.Get("title").ToString();
 
-                string msgText = "Rank " + rank + " Title: " + myFieldValue +
+				string msgText = "Rank " + rank + " Title: " + myFieldValue +
 								  ". Score: (" + scoreDoc.Score + ")";
 
-                var keepBrowsing = MessageBox.Show(msgText, "Results", 
-                                                   MessageBoxButtons.OKCancel, 
-                                                   MessageBoxIcon.Information);
+				var keepBrowsing = MessageBox.Show(msgText, "Results",
+												   MessageBoxButtons.OKCancel,
+												   MessageBoxIcon.Information);
 
-                if (keepBrowsing == DialogResult.Cancel) break;
+				if (keepBrowsing == DialogResult.Cancel) break;
 
 				//Explanation exp = searcher.Explain(query, scoreDoc.Doc);
 				//Console.WriteLine(exp);
-
 			}
-		}
+        }
 
 		/// helper function for RunQuery()
 		// closes the index after searching
@@ -161,8 +167,17 @@ namespace KUT_IR_n9648500
 			searcher.Dispose();
 		}
 
-        public void RunQuery(string text)
+        public string PreprocessQuery(string text)
         {
+            // do some magic here to improve the query
+            return "aerodynamic " + text;
+        }
+
+        public int RunQuery(string text)
+        {
+			// start timer...
+			DateTime start = System.DateTime.Now;
+
             CreateSearcher();
 
             // get the query settings from the collection
@@ -176,9 +191,21 @@ namespace KUT_IR_n9648500
             parser = new MultiFieldQueryParser(Lucene.Net.Util.Version.LUCENE_30, 
                                                queryFields, analyzer, queryParams);
 
-            SearchText(text);
+            TopDocs results = SearchText(text);
 
-            CleanUpSearcher();
+			// end timer and calculate total time
+			DateTime end = System.DateTime.Now;
+			TimeSpan duration = end - start;
+			queryTime = duration.Seconds + (float)duration.Milliseconds/1000;
+
+            MessageBox.Show("Time to query: " + queryTime + " seconds.");
+
+            // dodgy results display
+            DisplaySearchResults(results);
+
+			CleanUpSearcher();
+
+			return 0;
         }
     }
 }

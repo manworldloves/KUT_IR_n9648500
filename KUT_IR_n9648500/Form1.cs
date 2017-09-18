@@ -53,7 +53,7 @@ namespace KUT_IR_n9648500
             {
                 float indexTime = myIREngine.indexTime;
                 MessageBox.Show("Index created successfully!\nTime to index: "
-                                + indexTime + " msec");
+                                + indexTime + " seconds");
 
                 // open query dialog
                 Form queryForm = new frmQuery(myIREngine);

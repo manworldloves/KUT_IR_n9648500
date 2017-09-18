@@ -13,6 +13,7 @@ namespace KUT_IR_n9648500
     public partial class frmQuery : Form
     {
         LuceneIREngine myIREngine = new LuceneIREngine();
+        string queryText;
 
         public frmQuery()
         {
@@ -32,16 +33,12 @@ namespace KUT_IR_n9648500
 
         private void chkProcess_CheckedChanged(object sender, EventArgs e)
         {
-            if (chkProcess.Checked==true)
-            {
-                MessageBox.Show("Preprocessing query.");
-            }
+            UpdateQueryText();
         }
 
         private void btnQuery_Click(object sender, EventArgs e)
         {
-            lblProcQuery.Text = txtQuery.Text;
-            string queryText = txtQuery.Text;
+            UpdateQueryText();
 
             if (queryText!="")
             {
@@ -51,6 +48,20 @@ namespace KUT_IR_n9648500
             {
                 MessageBox.Show("No query entered.\nTry again.");
             }
+        }
+
+        private void UpdateQueryText()
+        {
+			if (chkProcess.Checked == true)
+			{
+				queryText = myIREngine.PreprocessQuery(txtQuery.Text);
+			}
+			else
+			{
+				queryText = txtQuery.Text;
+			}
+
+			lblProcQuery.Text = queryText;
         }
     }
 }
