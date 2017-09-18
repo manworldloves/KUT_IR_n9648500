@@ -8,7 +8,7 @@ namespace KUT_IR_n9648500
     abstract class IRDocument
     {
         public abstract void AddToIndex(Lucene.Net.Index.IndexWriter writer);
-        public abstract IDictionary<string, float> GetQueryParams();
+        public abstract Dictionary<string, float> GetQueryParams();
     }
 
     class IRCollection
@@ -45,7 +45,7 @@ namespace KUT_IR_n9648500
             }    
         }
 
-        public IDictionary<string, float> GetQueryParams()
+        public Dictionary<string, float> GetQueryParams()
         {
             return collectionDocs[0].GetQueryParams();
         }

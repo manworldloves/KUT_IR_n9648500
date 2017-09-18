@@ -9,6 +9,7 @@ using Lucene.Net.Index; //for Index Writer
 using Lucene.Net.Store; //for Directory
 using Lucene.Net.Search; // for IndexSearcher
 using Lucene.Net.QueryParsers;  // for QueryParser
+using System.Windows.Forms;
 
 namespace KUT_IR_n9648500
 {
@@ -125,23 +126,30 @@ namespace KUT_IR_n9648500
 		private void SearchText(string querytext)
 		{
 
-			System.Console.WriteLine("Searching for " + querytext);
+			//System.Console.WriteLine("Searching for " + querytext);
 			querytext = querytext.ToLower();
 			Query query = parser.Parse(querytext);
 
 			TopDocs results = searcher.Search(query, 100);
-			System.Console.WriteLine("Number of results is " + results.TotalHits);
+			MessageBox.Show("Number of results is " + results.TotalHits);
 			int rank = 0;
 			foreach (ScoreDoc scoreDoc in results.ScoreDocs)
 			{
 				rank++;
 				Lucene.Net.Documents.Document doc = searcher.Doc(scoreDoc.Doc);
 				string myFieldValue = doc.Get("title").ToString();
-				Console.WriteLine("Rank " + rank + " text " + myFieldValue +
-								  ". Score: (" + scoreDoc.Score + ")");
 
-				Explanation exp = searcher.Explain(query, scoreDoc.Doc);
-				Console.WriteLine(exp);
+                string msgText = "Rank " + rank + " Title: " + myFieldValue +
+								  ". Score: (" + scoreDoc.Score + ")";
+
+                var keepBrowsing = MessageBox.Show(msgText, "Results", 
+                                                   MessageBoxButtons.OKCancel, 
+                                                   MessageBoxIcon.Information);
+
+                if (keepBrowsing == DialogResult.Cancel) break;
+
+				//Explanation exp = searcher.Explain(query, scoreDoc.Doc);
+				//Console.WriteLine(exp);
 
 			}
 		}
@@ -158,7 +166,8 @@ namespace KUT_IR_n9648500
             CreateSearcher();
 
             // get the query settings from the collection
-            string[] queryFields = queryParams.Keys as string[];
+            var test = queryParams.Keys;
+            string[] queryFields = queryParams.Keys.ToArray();
 
             /// other options...
             // DefaultOperator - AND / OR

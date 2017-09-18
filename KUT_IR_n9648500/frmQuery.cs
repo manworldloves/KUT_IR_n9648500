@@ -41,6 +41,16 @@ namespace KUT_IR_n9648500
         private void btnQuery_Click(object sender, EventArgs e)
         {
             lblProcQuery.Text = txtQuery.Text;
+            string queryText = txtQuery.Text;
+
+            if (queryText!="")
+            {
+                myIREngine.RunQuery(queryText);
+            }
+            else
+            {
+                MessageBox.Show("No query entered.\nTry again.");
+            }
         }
     }
 }
