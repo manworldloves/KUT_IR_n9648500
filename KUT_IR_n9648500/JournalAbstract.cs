@@ -29,7 +29,12 @@ namespace KUT_IR_n9648500
             words = docParts[5].Substring(title.Length);
         }
 
-        public override void AddToIndex(Lucene.Net.Index.IndexWriter writer)
+        public static JournalAbstract CreateNewIRDocument (string document)
+        {
+            return new JournalAbstract(document);
+        }
+
+        public void AddToIndex(Lucene.Net.Index.IndexWriter writer)
         {
 			// Custom add to index method for JournalAbstract class
             Field fieldID = new Field("docID", docID, Field.Store.YES, 
@@ -53,7 +58,7 @@ namespace KUT_IR_n9648500
 			writer.AddDocument(doc);
         }
 
-        public override Dictionary<string, float> GetQueryParams()
+        public Dictionary<string, float> GetQueryParams()
         {
             Dictionary<string, float> querySettings = new Dictionary<string, float>{};
 

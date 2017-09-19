@@ -4,11 +4,10 @@ using System.Reflection;
 
 namespace KUT_IR_n9648500
 {
-    
-    abstract class IRDocument
+    interface IRDocument
     {
-        public abstract void AddToIndex(Lucene.Net.Index.IndexWriter writer);
-        public abstract Dictionary<string, float> GetQueryParams();
+        void AddToIndex(Lucene.Net.Index.IndexWriter writer);
+        Dictionary<string, float> GetQueryParams();
     }
 
     class IRCollection
@@ -25,6 +24,7 @@ namespace KUT_IR_n9648500
         {
             return new JournalAbstract(text);
         }
+
 
         public IRCollection(List<String> collectionText)
         {
