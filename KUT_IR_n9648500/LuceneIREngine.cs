@@ -21,6 +21,8 @@ namespace KUT_IR_n9648500
 		Lucene.Net.Search.IndexSearcher searcher;
 		Lucene.Net.QueryParsers.QueryParser parser;
 
+        TopDocs searchResults;
+
         public float indexTime;
         public float queryTime;
 
@@ -131,10 +133,21 @@ namespace KUT_IR_n9648500
 			querytext = querytext.ToLower();
 			Query query = parser.Parse(querytext);
 
-			TopDocs results = searcher.Search(query, 100);
+			TopDocs results = searcher.Search(query, 1000);
 
             return results;
 		}
+
+        public IRCollection BuildResults ()
+        {
+            CreateSearcher();
+
+            IRCollection resultDocs = new IRCollection(searcher, searchResults);
+
+            CleanUpSearcher();
+
+            return resultDocs;
+        }
 
         public void DisplaySearchResults(TopDocs results)
         {
@@ -144,7 +157,11 @@ namespace KUT_IR_n9648500
 			{
 				rank++;
 				Lucene.Net.Documents.Document doc = searcher.Doc(scoreDoc.Doc);
-				string myFieldValue = doc.Get("title").ToString();
+                var temp = doc.GetFields();
+
+                var temp2 = temp[0].Name;
+
+                string myFieldValue = doc.Get("title").ToString();
 
 				string msgText = "Rank " + rank + " Title: " + myFieldValue +
 								  ". Score: (" + scoreDoc.Score + ")";
@@ -191,7 +208,7 @@ namespace KUT_IR_n9648500
             parser = new MultiFieldQueryParser(Lucene.Net.Util.Version.LUCENE_30, 
                                                queryFields, analyzer, queryParams);
 
-            TopDocs results = SearchText(text);
+            searchResults = SearchText(text);
 
 			// end timer and calculate total time
 			DateTime end = System.DateTime.Now;
@@ -199,13 +216,14 @@ namespace KUT_IR_n9648500
 			queryTime = duration.Seconds + (float)duration.Milliseconds/1000;
 
             MessageBox.Show("Time to query: " + queryTime + " seconds.");
+            MessageBox.Show("Number of results is " + searchResults.TotalHits);
 
             // dodgy results display
-            DisplaySearchResults(results);
+            //DisplaySearchResults(searchResults);
 
-			CleanUpSearcher();
+            CleanUpSearcher();
 
-			return 0;
+			return searchResults.TotalHits;
         }
     }
 }

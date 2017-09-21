@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Lucene.Net.Search;
 
 namespace KUT_IR_n9648500
 {
@@ -42,7 +43,20 @@ namespace KUT_IR_n9648500
 
             if (queryText!="")
             {
-                myIREngine.RunQuery(queryText);
+                // execute the query
+                int numberOfResults = myIREngine.RunQuery(queryText);
+
+                // open query dialog
+                if (numberOfResults > 0)
+                {
+                    Form resultsForm = new frmResults(myIREngine);
+                    resultsForm.Show();
+                }
+                else
+                {
+                    MessageBox.Show("No results found.\nTry again.");
+                }
+                
             }
             else
             {

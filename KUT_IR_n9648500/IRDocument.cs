@@ -1,16 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Lucene.Net.Search;
+using Lucene.Net.Documents;
 
 namespace KUT_IR_n9648500
 {
-    interface IRDocument
+    public interface IRDocument
     {
         void AddToIndex(Lucene.Net.Index.IndexWriter writer);
         Dictionary<string, float> GetQueryParams();
+        string[] GetResultSummary();
+        string[] GetResultSummaryColNames();
+
     }
 
-    class IRCollection
+    public class IRCollection
     {
         private List<IRDocument> collectionDocs;
 
@@ -23,6 +28,24 @@ namespace KUT_IR_n9648500
         private IRDocument CustomDocType(string text)
         {
             return new JournalAbstract(text);
+        }
+
+
+        public IRCollection(IndexSearcher searcher, TopDocs results)
+        {
+            List<IRDocument> collection = new List<IRDocument>();
+
+            int rank;
+            float score;
+            for (int i = 0; i < results.TotalHits; i++)
+            {
+                rank = i + 1;
+                score = results.ScoreDocs[i].Score;
+                Document doc = searcher.Doc(results.ScoreDocs[i].Doc);
+                collection.Add(new JournalAbstract(doc, rank, score));
+
+                collectionDocs = collection;
+            }
         }
 
 
@@ -49,7 +72,30 @@ namespace KUT_IR_n9648500
         {
             return collectionDocs[0].GetQueryParams();
         }
-    }
 
+        public IRDocument GetIRDocument(int index)
+        {
+            return collectionDocs[index];
+        }
+
+        public int Length()
+        {
+            return collectionDocs.Count;
+        }
+
+
+        public void BuildResults(IndexSearcher searcher, TopDocs results)
+        {
+            int rank;
+            float score;
+            for (int i = 0; i < results.TotalHits; i++)
+            {
+                rank = i + 1;
+                score = results.ScoreDocs[i].Score;
+                Document doc = searcher.Doc(results.ScoreDocs[i].Doc);
+                collectionDocs.Add(new JournalAbstract(doc, rank, score));
+            }
+        }
+    }
 
 }

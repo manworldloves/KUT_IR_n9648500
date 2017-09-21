@@ -24,9 +24,16 @@ namespace KUT_IR_n9648500
             btnCreateIndex.Enabled = false;
 
             // YOU NEED TO REMOVE THIS - JUST TO SPEED UP TESTING //
-            collectionFolder = @"/Users/nathan/collection";
-            indexFolder = @"/Users/nathan/index";
-            btnCreateIndex.Enabled = true;
+            // https://www.dotnetperls.com/settings
+            collectionFolder = Properties.Settings.Default.collectionDir;
+            indexFolder = Properties.Settings.Default.indexDir;
+            if (collectionFolder != "")
+                lblCollection.Text = collectionFolder;
+
+            if (indexFolder != "")
+                lblIndex.Text = indexFolder;
+
+            checkEnableCreateIndex();
 		}
 
         private void btnCollection_Click(object sender, EventArgs e)
@@ -51,6 +58,11 @@ namespace KUT_IR_n9648500
 
             if (success == 0)
             {
+                // save collection and index locations to user settings
+                Properties.Settings.Default.collectionDir = collectionFolder;
+                Properties.Settings.Default.indexDir = indexFolder;
+                Properties.Settings.Default.Save();
+
                 float indexTime = myIREngine.indexTime;
                 MessageBox.Show("Index created successfully!\nTime to index: "
                                 + indexTime + " seconds");
@@ -69,7 +81,7 @@ namespace KUT_IR_n9648500
 
         private void checkEnableCreateIndex()
         {
-            if (!(collectionFolder is null || indexFolder is null))
+            if ((collectionFolder != "") && (indexFolder != ""))
                 btnCreateIndex.Enabled = true;
         }
 
