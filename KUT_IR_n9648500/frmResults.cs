@@ -15,6 +15,7 @@ namespace KUT_IR_n9648500
     {
         LuceneIREngine myIREngine = new LuceneIREngine();
         IRCollection myResultCollection;
+        int pageNumber;
 
         public frmResults()
         {
@@ -25,6 +26,7 @@ namespace KUT_IR_n9648500
         {
             InitializeComponent();
             myIREngine = IREngine;
+            pageNumber = 0;
 
             /// good tutorial
             /// https://docs.microsoft.com/en-us/dotnet/framework/winforms/controls/walkthrough-creating-an-unbound-windows-forms-datagridview-control
@@ -35,7 +37,8 @@ namespace KUT_IR_n9648500
 
             // setup datagrid
             SetupDataGrid(myResultCollection.GetIRDocument(0).GetResultSummaryColNames());
-            PopulateDataGrid();
+            PopulateDataGrid(0);
+            btnPrevious.Enabled = false;
             dgSearchResults.MultiSelect = false;
             dgSearchResults.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgSearchResults.ReadOnly = true;
@@ -55,15 +58,35 @@ namespace KUT_IR_n9648500
 
         }
 
-        private void PopulateDataGrid()
+        private void PopulateDataGrid(int pageOffset)
         {
-            //dgSearchResults.Rows.Clear();
-     
-            for (int i = 0; i < myResultCollection.Length(); i++)
+            dgSearchResults.Rows.Clear();
+            int resultStart = pageOffset * 10;
+            int resultEnd = resultStart + 10;
+
+            // check that there are at least 10 more results to display
+            if (myResultCollection.Length() < resultEnd)
+                resultEnd = myResultCollection.Length();
+
+            // records to the datagrid
+            for (int i = resultStart; i < resultEnd; i++)
             {
                 string[] newRow = myResultCollection.GetIRDocument(i).GetResultSummary();
                 dgSearchResults.Rows.Add(newRow);
             }
+
+            // update text
+            lblResultRange.Text = "Displaying Results " + 
+                (resultStart + 1) + " - " + resultEnd;
+        }
+
+        private void DisplayDetailedResults()
+        {
+			int rowSelection = dgSearchResults.SelectedCells[0].RowIndex;
+			//MessageBox.Show("Selected row: " + rowSelection);
+			int docToDisplay = pageNumber * 10 + rowSelection;
+			Form detailsForm = new frmDetail(myResultCollection.GetIRDocument(docToDisplay));
+			detailsForm.Show();
         }
 
         private void btnSaveResults_Click(object sender, EventArgs e)
@@ -73,17 +96,35 @@ namespace KUT_IR_n9648500
 
         private void btnClearResults_Click(object sender, EventArgs e)
         {
-
+            // temporarily here because of mac
+            DisplayDetailedResults();
         }
 
         private void btnPrevious_Click(object sender, EventArgs e)
         {
-
+            pageNumber -= 1;
+            PopulateDataGrid(pageNumber);
+            CheckButtonsToEnable();
         }
 
         private void btnNext_Click(object sender, EventArgs e)
         {
+            pageNumber += 1;
+            PopulateDataGrid(pageNumber);
+            CheckButtonsToEnable();
+        }
 
+        private void CheckButtonsToEnable()
+        {
+            if (pageNumber == 0)
+                btnPrevious.Enabled = false;
+            else
+                btnPrevious.Enabled = true;
+
+            if (pageNumber * 10 + 10 > myResultCollection.Length())
+                btnNext.Enabled = false;
+            else
+                btnNext.Enabled = true;
         }
 
         private void dgSearchResults_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -93,16 +134,12 @@ namespace KUT_IR_n9648500
 
         private void dgSearchResults_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            int rowSelection = dgSearchResults.SelectedCells[0].RowIndex;
-            //MessageBox.Show("Selected row: " + rowSelection);
-            Form detailsForm = new frmDetail(myResultCollection.GetIRDocument(rowSelection));
-            detailsForm.Show();
+            DisplayDetailedResults();
         }
 
         private void dgSearchResults_RowHeaderMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            int rowSelection = dgSearchResults.SelectedCells[0].RowIndex;
-            //MessageBox.Show("Header Selected row: " + rowSelection);
+            DisplayDetailedResults();
         }
     }
 }
