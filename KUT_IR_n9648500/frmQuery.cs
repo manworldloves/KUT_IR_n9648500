@@ -18,6 +18,7 @@ namespace KUT_IR_n9648500
 
         public frmQuery()
         {
+            // default constructor
             InitializeComponent();
         }
 
@@ -27,24 +28,27 @@ namespace KUT_IR_n9648500
             myIREngine = IREngine;
         }
 
-        public void TestMethod()
-        {
-            myIREngine.RunQuery("help!");
-        }
-
         private void chkProcess_CheckedChanged(object sender, EventArgs e)
         {
-            UpdateQueryText();
+			if (chkProcess.Checked == true)
+			{
+				queryText = myIREngine.PreprocessQuery(txtQuery.Text);
+			}
+			else
+			{
+				queryText = txtQuery.Text;
+			}
+
+			lblProcQuery.Text = queryText;
         }
 
         private void btnQuery_Click(object sender, EventArgs e)
         {
-            UpdateQueryText();
-
-            if (queryText!="")
+            if (txtQuery.Text !="")
             {
                 // execute the query
-                int numberOfResults = myIREngine.RunQuery(queryText);
+                int numberOfResults = myIREngine.RunQuery(txtQuery.Text, 
+                                                          chkProcess.Checked);
 
                 // open query dialog
                 if (numberOfResults > 0)
@@ -64,18 +68,5 @@ namespace KUT_IR_n9648500
             }
         }
 
-        private void UpdateQueryText()
-        {
-			if (chkProcess.Checked == true)
-			{
-				queryText = myIREngine.PreprocessQuery(txtQuery.Text);
-			}
-			else
-			{
-				queryText = txtQuery.Text;
-			}
-
-			lblProcQuery.Text = queryText;
-        }
     }
 }

@@ -21,13 +21,16 @@ namespace KUT_IR_n9648500
 		Lucene.Net.Search.IndexSearcher searcher;
 		Lucene.Net.QueryParsers.QueryParser parser;
 
+        public string originalQuery = "";
+        public string processedQuery = "";
+
         TopDocs searchResults;
 
         public float indexTime;
         public float queryTime;
 
         // things to get from collection that is not indexed
-        IDictionary<string, float> queryParams;
+        IRQueryParams queryParams;
 
 		const Lucene.Net.Util.Version VERSION = Lucene.Net.Util.Version.LUCENE_30;
 
@@ -184,29 +187,98 @@ namespace KUT_IR_n9648500
 			searcher.Dispose();
 		}
 
-        public string PreprocessQuery(string text)
+        private List<string> AddBoostToStringArray(List<string> tokens, float boost)
         {
-            // do some magic here to improve the query
-            return "aerodynamic " + text;
+            List<string> outputTokens = new List<string>();
+            foreach (string token in tokens)
+            {
+                outputTokens.Add(token + '^' + boost);
+            }
+
+            return outputTokens;
         }
 
-        public int RunQuery(string text)
+        // Method to take users query text as input
+        // and does various things to it to produce
+        // the actual text that is input to the searcher
+        public string PreprocessQuery(string origText)
+        {
+            //string[] origTokens = TextProcessing.TokeniseString(origText);
+
+            List<string> origTokens = TextProcessing.TokeniseString(origText).ToList();
+
+            // Query pre processing steps.
+			// 1. remove stop words if required
+			if (queryParams.RemoveStopWords)
+			{
+                origTokens = TextProcessing.RemoveStopWords(origTokens);
+			}
+
+            List<string> preprocTokens = origTokens;
+
+			// 2. get ngrams if required
+			int n = queryParams.NGrams;
+			if (n > 1)
+			{
+				List<string> nGrams = TextProcessing.getNGrams(preprocTokens, n);
+				float nGramBoost = queryParams.NGramBoost;
+				List<string> nGramsWithBoost = AddBoostToStringArray(nGrams, nGramBoost);
+                preprocTokens.AddRange(nGramsWithBoost);
+			}
+
+			// 3. get synonums if required
+			if (queryParams.AddSynonyms == true)
+			{
+				List<string> synonyms = TextProcessing.getSynonyms(origTokens);
+				float synBoost = queryParams.SynonymBoost;
+				List<string> synWithBoost = AddBoostToStringArray(synonyms, synBoost);
+                preprocTokens.AddRange(synWithBoost);
+			}
+
+            // 4. turn the list back to a string
+            string preprocString = "";
+            foreach (string token in preprocTokens)
+            {
+                preprocString += token + " ";
+            }
+            preprocString.Trim();
+
+            return preprocString;
+        }
+
+        public int RunQuery(string text, bool preproc)
         {
 			// start timer...
 			DateTime start = System.DateTime.Now;
 
+            originalQuery = text;
+
             CreateSearcher();
 
-            // get the query settings from the collection
-            var test = queryParams.Keys;
-            string[] queryFields = queryParams.Keys.ToArray();
+            // preprocess query
+            if (preproc == true)
+            {
+                text = PreprocessQuery(text);
+                processedQuery = text;
+            }
 
-            /// other options...
-            // DefaultOperator - AND / OR
-            // BooleanQuery - combine queries in different ways
+			/// other options...
+			// DefaultOperator - AND / OR
+			// BooleanQuery - combine queries in different ways
 
-            parser = new MultiFieldQueryParser(Lucene.Net.Util.Version.LUCENE_30, 
-                                               queryFields, analyzer, queryParams);
+			// get the query settings from the collection
+			string[] queryFields = queryParams.Fields;
+			float[] queryFieldBoosts = queryParams.FieldBoosts;
+
+			// build field boost dictionary
+			IDictionary<string, float> boosts = new Dictionary<string, float>();
+			for (int i = 0; i < queryFields.Length; i++)
+			{
+				boosts.Add(queryFields[i], queryFieldBoosts[i]);
+			}
+
+            parser = new MultiFieldQueryParser(Lucene.Net.Util.Version.LUCENE_30,
+                                               queryFields, analyzer, boosts);
 
             searchResults = SearchText(text);
 

@@ -109,6 +109,7 @@
     </Compile>
     <Compile Include="LuceneIREngine.cs" />
     <Compile Include="IRDocument.cs" />
+    <Compile Include="TextProcessing.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

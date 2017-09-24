@@ -15,12 +15,43 @@ namespace KUT_IR_n9648500
         public float Score { get { return score; } }
 
         public abstract void AddToIndex(Lucene.Net.Index.IndexWriter writer);
-        public abstract Dictionary<string, float> GetQueryParams();
+        public abstract IRQueryParams GetQueryParams();
         public abstract string[] GetResultSummary();
         public abstract string[] GetResultSummaryColNames();
         public abstract string GetDocID();
 
     }
+
+    public class IRQueryParams
+    {
+        private string[] fields;
+        private float[] fieldBoosts;
+        private bool removeStopWords;
+        private int nGrams;
+        private float nGramBoost;
+        private bool addSynonyms;
+        private float synonymBoost;
+
+		public string[] Fields { get { return fields; } }
+        public float[] FieldBoosts { get { return fieldBoosts; }}
+        public bool RemoveStopWords { get { return removeStopWords; }}
+        public int NGrams { get { return nGrams; }}
+        public float NGramBoost { get { return nGramBoost; }}
+        public bool AddSynonyms { get { return addSynonyms; }}
+        public float SynonymBoost { get { return synonymBoost; }}
+
+        public IRQueryParams(string[] fs, float[] fboosts, bool remSW,
+                            int ngs, float ngboost, bool addsyn, float synboost)
+        {
+            fields = fs;
+            fieldBoosts = fboosts;
+            removeStopWords = remSW;
+            nGrams = ngs;
+            nGramBoost = ngboost;
+            addSynonyms = addsyn;
+            synonymBoost = synboost;
+        }
+	}
 
     public class IRCollection
     {
@@ -69,7 +100,7 @@ namespace KUT_IR_n9648500
             }    
         }
 
-        public Dictionary<string, float> GetQueryParams()
+        public IRQueryParams GetQueryParams()
         {
             return collectionDocs[0].GetQueryParams();
         }

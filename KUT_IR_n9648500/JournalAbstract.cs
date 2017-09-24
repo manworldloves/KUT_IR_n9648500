@@ -16,6 +16,12 @@ namespace KUT_IR_n9648500
         private string biblioInfo;
         private string words;
 
+		public string DocID { get { return docID; } }
+		public string Title { get { return title; } }
+		public string Author { get { return author; } }
+		public string BiblioInfo { get { return biblioInfo; } }
+		public string Words { get { return words; } }
+
         public JournalAbstract(string document)
         {
             string[] delims = { ".I", ".T", ".A", ".B", ".W" };
@@ -49,12 +55,6 @@ namespace KUT_IR_n9648500
             this.score = score;
         }
 
-        public string DocID { get { return docID; } }
-        public string Title { get { return title; } }
-        public string Author { get { return author; } }
-        public string BiblioInfo { get { return biblioInfo; } }
-        public string Words { get { return words; } }
-
         public override void AddToIndex(Lucene.Net.Index.IndexWriter writer)
         {
             // Custom add to index method for JournalAbstract class
@@ -69,6 +69,10 @@ namespace KUT_IR_n9648500
             Field fieldWords = new Field("words", words, Field.Store.YES,
                                             Field.Index.ANALYZED, Field.TermVector.YES);
 
+            // add boosts
+            fieldTitle.Boost = 5;
+
+            // create document
             Document doc = new Document();
             doc.Add(fieldID);
             doc.Add(fieldTitle);
@@ -79,12 +83,20 @@ namespace KUT_IR_n9648500
             writer.AddDocument(doc);
         }
 
-        public override Dictionary<string, float> GetQueryParams()
+        public override IRQueryParams GetQueryParams()
         {
-            Dictionary<string, float> querySettings = new Dictionary<string, float> { };
+            string[] fields = new string[] { "title", "words" };
+            float[] fieldBoost = new float[] { 5.0f, 5.0f };
+            bool removeStopWords = true;
+            int nGrams = 2;
+            float nGramBoost = 2.5f;
+            bool addSynonyms = true;
+            float synonymBoost = 1.0f;
 
-            querySettings.Add("title", 2.5f);
-            querySettings.Add("words", 1.0f);
+            IRQueryParams querySettings = new IRQueryParams(fields, fieldBoost,
+                                                           removeStopWords,
+                                                           nGrams, nGramBoost,
+                                                            addSynonyms, synonymBoost);
 
             return querySettings;
         }
