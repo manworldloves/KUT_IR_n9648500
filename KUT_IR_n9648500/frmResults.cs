@@ -39,6 +39,8 @@ namespace KUT_IR_n9648500
             SetupDataGrid(myResultCollection.GetIRDocument(0).GetResultSummaryColNames());
             PopulateDataGrid(0);
             btnPrevious.Enabled = false;
+            if (myResultCollection.Length() <= 10)
+                btnNext.Enabled = false;
             dgSearchResults.MultiSelect = false;
             dgSearchResults.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgSearchResults.ReadOnly = true;

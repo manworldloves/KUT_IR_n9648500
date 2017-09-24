@@ -225,5 +225,20 @@ namespace KUT_IR_n9648500
 
 			return searchResults.TotalHits;
         }
+
+        public int WriteEvalFile(string fileName, IRCollection results)
+        {
+            List<string> evalList = new List<string>();
+
+            string groupName = "Nathan_only";
+            // structure TopicID QO DocID rank score group
+
+            for (int i = 0; i < results.Length(); i++)
+            {
+                // build string for eval file
+            }
+
+            return 0;
+        }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace KUT_IR_n9648500
 {
@@ -13,18 +14,36 @@ namespace KUT_IR_n9648500
             string text = "";
             try
             {
-                System.IO.TextReader reader = new System.IO.StreamReader(filename);
+                TextReader reader = new StreamReader(filename);
                 text = reader.ReadToEnd();
                 reader.Close();
             }
 
-            catch (System.IO.IOException e)
+            catch (IOException e)
             {
                 System.Diagnostics.Debug.WriteLine(e.Message);
             }
             
             return text;
         }
+
+        public static void WriteTextFile(List<string> text, string FileName, bool appendMode)
+        {
+            try
+            {
+                TextWriter writer = new System.IO.StreamWriter(FileName, appendMode);
+                foreach (string line in text)
+                {
+                    writer.Write(line);
+                }
+            }
+			catch (IOException e)
+			{
+				System.Diagnostics.Debug.WriteLine(e.Message);
+			}
+
+        }
+
         public static List<string> GetFileNames(String path, bool recursiveDir)
         {
             System.IO.DirectoryInfo root = new System.IO.DirectoryInfo(path);

@@ -6,12 +6,15 @@ using Lucene.Net.Documents;
 
 namespace KUT_IR_n9648500
 {
-    public interface IRDocument
+    public abstract class IRDocument
     {
-        void AddToIndex(Lucene.Net.Index.IndexWriter writer);
-        Dictionary<string, float> GetQueryParams();
-        string[] GetResultSummary();
-        string[] GetResultSummaryColNames();
+        protected int rank;
+        protected float score;
+
+        public abstract void AddToIndex(Lucene.Net.Index.IndexWriter writer);
+        public abstract Dictionary<string, float> GetQueryParams();
+        public abstract string[] GetResultSummary();
+        public abstract string[] GetResultSummaryColNames();
 
     }
 

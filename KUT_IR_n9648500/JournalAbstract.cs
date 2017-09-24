@@ -17,8 +17,8 @@ namespace KUT_IR_n9648500
         private string words;
 
         // added when used as results
-        private int rank;
-        private float score;
+        //private int rank;
+        //private float score;
 
         public JournalAbstract(string document)
         {
@@ -51,7 +51,7 @@ namespace KUT_IR_n9648500
         public string BiblioInfo { get { return biblioInfo; } }
         public string Words { get { return words; } }
 
-        public void AddToIndex(Lucene.Net.Index.IndexWriter writer)
+        public override void AddToIndex(Lucene.Net.Index.IndexWriter writer)
         {
             // Custom add to index method for JournalAbstract class
             Field fieldID = new Field("docID", docID, Field.Store.YES,
@@ -75,7 +75,7 @@ namespace KUT_IR_n9648500
             writer.AddDocument(doc);
         }
 
-        public Dictionary<string, float> GetQueryParams()
+        public override Dictionary<string, float> GetQueryParams()
         {
             Dictionary<string, float> querySettings = new Dictionary<string, float> { };
 
@@ -85,12 +85,12 @@ namespace KUT_IR_n9648500
             return querySettings;
         }
 
-        public string[] GetResultSummaryColNames()
+        public override string[] GetResultSummaryColNames()
         {
             return new string[] { "Title", "Author", "Bibliographic Info", "Abstract" };
         }
         
-        public string[] GetResultSummary()
+        public override string[] GetResultSummary()
         {
             return new string[] { title, author, biblioInfo, GetFirstSentence(words) };
         }
