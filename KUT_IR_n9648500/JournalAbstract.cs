@@ -20,14 +20,22 @@ namespace KUT_IR_n9648500
         {
             string[] delims = { ".I", ".T", ".A", ".B", ".W" };
 
-            string[] docParts = document.Split(delims, StringSplitOptions.None);
-            docID = docParts[1];
-            title = docParts[2];
-            author = docParts[3];
-            biblioInfo = docParts[4];
+            string[] docParts = document.Split(delims, StringSplitOptions.RemoveEmptyEntries);
+
+            // strip end of line chars from the fields
+            for (int i = 0; i < 4; i++)
+            {
+                docParts[i] = docParts[i].Trim();
+            }
+
+            docID = docParts[0];
+            title = docParts[1];
+            author = docParts[2];
+            biblioInfo = docParts[3];
 
             // title is also part of words - strip it out
-            words = docParts[5].Substring(title.Length);
+            docParts[4] = docParts[4].Substring(title.Length+1);
+            words = docParts[4].Trim();
         }
 
         public JournalAbstract(Document doc, int rank, float score)
