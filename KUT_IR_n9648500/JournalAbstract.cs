@@ -41,7 +41,8 @@ namespace KUT_IR_n9648500
 
             // title is also part of words - strip it out
             docParts[4] = docParts[4].Substring(title.Length+1);
-            words = docParts[4].Trim();
+
+            words = TextProcessing.Unix2Dos(docParts[4].Trim());
         }
 
         public JournalAbstract(Document doc, int rank, float score)

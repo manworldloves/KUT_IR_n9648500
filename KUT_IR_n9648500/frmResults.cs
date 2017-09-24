@@ -143,5 +143,10 @@ namespace KUT_IR_n9648500
         {
             DisplayDetailedResults();
         }
+
+        private void btnOpenDetails_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

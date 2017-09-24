@@ -60,6 +60,12 @@
     <Compile Include="frmQuery.Designer.cs">
       <DependentUpon>frmQuery.cs</DependentUpon>
     </Compile>
+    <Compile Include="frmQuerySelect.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmQuerySelect.Designer.cs">
+      <DependentUpon>frmQuerySelect.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmResults.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -85,6 +91,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmQuery.resx">
       <DependentUpon>frmQuery.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmQuerySelect.resx">
+      <DependentUpon>frmQuerySelect.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmResults.resx">
       <DependentUpon>frmResults.cs</DependentUpon>

@@ -35,6 +35,10 @@
             this.btnPrevious = new System.Windows.Forms.Button();
             this.lblResultRange = new System.Windows.Forms.Label();
             this.btnNext = new System.Windows.Forms.Button();
+            this.btnOpenDetails = new System.Windows.Forms.Button();
+            this.lblTotalResults = new System.Windows.Forms.Label();
+            this.lblQueryTime = new System.Windows.Forms.Label();
+            this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.dgSearchResults)).BeginInit();
             this.SuspendLayout();
             // 
@@ -52,7 +56,7 @@
             this.dgSearchResults.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgSearchResults.Location = new System.Drawing.Point(13, 13);
             this.dgSearchResults.Name = "dgSearchResults";
-            this.dgSearchResults.Size = new System.Drawing.Size(1559, 664);
+            this.dgSearchResults.Size = new System.Drawing.Size(1251, 664);
             this.dgSearchResults.TabIndex = 0;
             this.dgSearchResults.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgSearchResults_CellContentClick);
             this.dgSearchResults.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgSearchResults_CellContentDoubleClick);
@@ -60,7 +64,7 @@
             // 
             // btnSaveResults
             // 
-            this.btnSaveResults.Location = new System.Drawing.Point(13, 695);
+            this.btnSaveResults.Location = new System.Drawing.Point(909, 695);
             this.btnSaveResults.Name = "btnSaveResults";
             this.btnSaveResults.Size = new System.Drawing.Size(95, 54);
             this.btnSaveResults.TabIndex = 1;
@@ -70,7 +74,7 @@
             // 
             // btnClearResults
             // 
-            this.btnClearResults.Location = new System.Drawing.Point(132, 695);
+            this.btnClearResults.Location = new System.Drawing.Point(1028, 695);
             this.btnClearResults.Name = "btnClearResults";
             this.btnClearResults.Size = new System.Drawing.Size(95, 54);
             this.btnClearResults.TabIndex = 2;
@@ -80,7 +84,7 @@
             // 
             // btnPrevious
             // 
-            this.btnPrevious.Location = new System.Drawing.Point(427, 695);
+            this.btnPrevious.Location = new System.Drawing.Point(409, 695);
             this.btnPrevious.Name = "btnPrevious";
             this.btnPrevious.Size = new System.Drawing.Size(67, 54);
             this.btnPrevious.TabIndex = 3;
@@ -101,7 +105,7 @@
             // 
             // btnNext
             // 
-            this.btnNext.Location = new System.Drawing.Point(782, 695);
+            this.btnNext.Location = new System.Drawing.Point(802, 695);
             this.btnNext.Name = "btnNext";
             this.btnNext.Size = new System.Drawing.Size(67, 54);
             this.btnNext.TabIndex = 5;
@@ -109,11 +113,42 @@
             this.btnNext.UseVisualStyleBackColor = true;
             this.btnNext.Click += new System.EventHandler(this.btnNext_Click);
             // 
+            // btnOpenDetails
+            // 
+            this.btnOpenDetails.Location = new System.Drawing.Point(13, 695);
+            this.btnOpenDetails.Name = "btnOpenDetails";
+            this.btnOpenDetails.Size = new System.Drawing.Size(94, 54);
+            this.btnOpenDetails.TabIndex = 6;
+            this.btnOpenDetails.Text = "Open Details";
+            this.btnOpenDetails.UseVisualStyleBackColor = true;
+            this.btnOpenDetails.Click += new System.EventHandler(this.btnOpenDetails_Click);
+            // 
+            // lblTotalResults
+            // 
+            this.lblTotalResults.AutoSize = true;
+            this.lblTotalResults.Location = new System.Drawing.Point(128, 695);
+            this.lblTotalResults.Name = "lblTotalResults";
+            this.lblTotalResults.Size = new System.Drawing.Size(69, 13);
+            this.lblTotalResults.TabIndex = 7;
+            this.lblTotalResults.Text = "Total Resuls:";
+            // 
+            // lblQueryTime
+            // 
+            this.lblQueryTime.AutoSize = true;
+            this.lblQueryTime.Location = new System.Drawing.Point(128, 719);
+            this.lblQueryTime.Name = "lblQueryTime";
+            this.lblQueryTime.Size = new System.Drawing.Size(74, 13);
+            this.lblQueryTime.TabIndex = 8;
+            this.lblQueryTime.Text = "Time to query:";
+            // 
             // frmResults
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1584, 761);
+            this.ClientSize = new System.Drawing.Size(1276, 761);
+            this.Controls.Add(this.lblQueryTime);
+            this.Controls.Add(this.lblTotalResults);
+            this.Controls.Add(this.btnOpenDetails);
             this.Controls.Add(this.btnNext);
             this.Controls.Add(this.lblResultRange);
             this.Controls.Add(this.btnPrevious);
@@ -137,5 +172,9 @@
         private System.Windows.Forms.Button btnPrevious;
         private System.Windows.Forms.Label lblResultRange;
         private System.Windows.Forms.Button btnNext;
+        private System.Windows.Forms.Button btnOpenDetails;
+        private System.Windows.Forms.Label lblTotalResults;
+        private System.Windows.Forms.Label lblQueryTime;
+        private System.Windows.Forms.SaveFileDialog saveFileDialog;
     }
 }

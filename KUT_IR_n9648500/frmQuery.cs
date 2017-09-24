@@ -68,5 +68,12 @@ namespace KUT_IR_n9648500
             }
         }
 
+        private void btnOpenQueryFile_Click(object sender, EventArgs e)
+        {
+            openFileDialog.ShowDialog();
+            string selectedFile = openFileDialog.FileName;
+
+            MessageBox.Show(selectedFile);
+        }
     }
 }
