@@ -85,6 +85,7 @@ namespace KUT_IR_n9648500
             return documents;
         }
 
+        /// Builds the index...
         public int CreateIndex(string collectionPath, string indexPath)
         {
             // start timer...
@@ -140,45 +141,6 @@ namespace KUT_IR_n9648500
 
             return results;
 		}
-
-        public IRCollection BuildResults ()
-        {
-            CreateSearcher();
-
-            IRCollection resultDocs = new IRCollection(searcher, searchResults);
-
-            CleanUpSearcher();
-
-            return resultDocs;
-        }
-
-        public void DisplaySearchResults(TopDocs results)
-        {
-			MessageBox.Show("Number of results is " + results.TotalHits);
-			int rank = 0;
-			foreach (ScoreDoc scoreDoc in results.ScoreDocs)
-			{
-				rank++;
-				Lucene.Net.Documents.Document doc = searcher.Doc(scoreDoc.Doc);
-                var temp = doc.GetFields();
-
-                var temp2 = temp[0].Name;
-
-                string myFieldValue = doc.Get("title").ToString();
-
-				string msgText = "Rank " + rank + " Title: " + myFieldValue +
-								  ". Score: (" + scoreDoc.Score + ")";
-
-				var keepBrowsing = MessageBox.Show(msgText, "Results",
-												   MessageBoxButtons.OKCancel,
-												   MessageBoxIcon.Information);
-
-				if (keepBrowsing == DialogResult.Cancel) break;
-
-				//Explanation exp = searcher.Explain(query, scoreDoc.Doc);
-				//Console.WriteLine(exp);
-			}
-        }
 
 		/// helper function for RunQuery()
 		// closes the index after searching
@@ -246,6 +208,11 @@ namespace KUT_IR_n9648500
             return preprocString;
         }
 
+        /// Executes the query.
+        //  Preprocesses the query text entered by the user
+        //  and queries the index.
+        //  Calculates the total time to run the query
+        //  and sets some text variables for later use.
         public int RunQuery(string text, bool preproc)
         {
 			// start timer...
@@ -298,6 +265,20 @@ namespace KUT_IR_n9648500
 			return searchResults.TotalHits;
         }
 
+        /// Builds an IRCollection from the search results.
+        //  This is used to display the search results.
+		public IRCollection BuildResults()
+		{
+			CreateSearcher();
+
+			IRCollection resultDocs = new IRCollection(searcher, searchResults);
+
+			CleanUpSearcher();
+
+			return resultDocs;
+		}
+
+        /// Writes a trec evaluation file from the search results.
         public int WriteEvalFile(string fileName, IRCollection results)
         {
             List<string> evalList = new List<string>();

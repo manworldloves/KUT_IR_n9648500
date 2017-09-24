@@ -6,11 +6,13 @@ namespace KUT_IR_n9648500
 {
     public class TextProcessing
     {
+        // This class is really just for query pre-processing
         public TextProcessing()
         {
 
         }
 
+        // split the string into tokens
 		public static List<string> TokeniseString(string text)
 		{
 			char[] delims = { ' ', '(', ')', '[', ']', '{', '}', '<', '>',
@@ -25,6 +27,7 @@ namespace KUT_IR_n9648500
 			return tokens.ToList();
 		}
 
+        // create N-Grams from query input text
 		public static List<string> getNGrams(List<string> tokens, int n)
 		{
 			//error checking so that n is between 0 and length of tokens
@@ -58,6 +61,7 @@ namespace KUT_IR_n9648500
 			return nGrams;
 		}
 
+        // get synonyms from query text
         public static List<string> getSynonyms(List<string> words)
         {
             List<string> synonyms = new List<string> { "gesicht" };
@@ -65,7 +69,7 @@ namespace KUT_IR_n9648500
             return synonyms;
         }
 
-        
+        // remove stop words and small words from  token list
 		public static List<string> RemoveStopWords(List<string> tokens)
 		{
 			// init stop words
