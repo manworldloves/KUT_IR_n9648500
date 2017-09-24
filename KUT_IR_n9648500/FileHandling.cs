@@ -36,6 +36,7 @@ namespace KUT_IR_n9648500
                 {
                     writer.Write(line);
                 }
+                writer.Close();
             }
 			catch (IOException e)
 			{

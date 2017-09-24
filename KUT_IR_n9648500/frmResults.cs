@@ -93,7 +93,7 @@ namespace KUT_IR_n9648500
 
         private void btnSaveResults_Click(object sender, EventArgs e)
         {
-
+            myIREngine.WriteEvalFile(@"../../nathan_eval.txt", myResultCollection);
         }
 
         private void btnClearResults_Click(object sender, EventArgs e)

@@ -16,10 +16,6 @@ namespace KUT_IR_n9648500
         private string biblioInfo;
         private string words;
 
-        // added when used as results
-        //private int rank;
-        //private float score;
-
         public JournalAbstract(string document)
         {
             string[] delims = { ".I", ".T", ".A", ".B", ".W" };
@@ -102,6 +98,11 @@ namespace KUT_IR_n9648500
             firstSentence = firstSentence.TrimStart(new char[] { ' ' }) + '.';
             return firstSentence;
         }
+
+		public override string GetDocID()
+		{
+            return docID;
+		}
 
         override public string ToString()
         {

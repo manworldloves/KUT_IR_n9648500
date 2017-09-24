@@ -11,10 +11,14 @@ namespace KUT_IR_n9648500
         protected int rank;
         protected float score;
 
+        public int Rank { get { return rank; } }
+        public float Score { get { return score; } }
+
         public abstract void AddToIndex(Lucene.Net.Index.IndexWriter writer);
         public abstract Dictionary<string, float> GetQueryParams();
         public abstract string[] GetResultSummary();
         public abstract string[] GetResultSummaryColNames();
+        public abstract string GetDocID();
 
     }
 
@@ -22,18 +26,12 @@ namespace KUT_IR_n9648500
     {
         private List<IRDocument> collectionDocs;
 
+        
         /// <summary>
-        /// Builds a custom document and returns it.
-        /// Change the constructor below. eg JournalAbstract
+        /// Update the custom doc type in the constructors
         /// </summary>
-        /// <returns>The document type.</returns>
-        /// <param name="text">Text.</param>
-        private IRDocument CustomDocType(string text)
-        {
-            return new JournalAbstract(text);
-        }
-
-
+        /// <param name="searcher">Searcher.</param>
+        /// <param name="results">Results.</param>
         public IRCollection(IndexSearcher searcher, TopDocs results)
         {
             List<IRDocument> collection = new List<IRDocument>();
@@ -57,7 +55,7 @@ namespace KUT_IR_n9648500
             List<IRDocument> collection = new List<IRDocument>();
             foreach (string text in collectionText)
             {
-                collection.Add(CustomDocType(text));
+                collection.Add(new JournalAbstract(text));
             }
 
             collectionDocs = collection;

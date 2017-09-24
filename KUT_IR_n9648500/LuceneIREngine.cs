@@ -230,13 +230,28 @@ namespace KUT_IR_n9648500
         {
             List<string> evalList = new List<string>();
 
-            string groupName = "Nathan_only";
-            // structure TopicID QO DocID rank score group
+            // need to get this from user or automatically
+            string topicID = "101";
 
+            // this is fixed
+            string groupName = "n9648500_NathanOnly";
+
+            // structure TopicID QO DocID rank score group
+            string tempString = "";
             for (int i = 0; i < results.Length(); i++)
             {
-                // build string for eval file
+                IRDocument doc = results.GetIRDocument(i);
+                tempString = topicID + "\tQ0\t";
+                tempString += doc.GetDocID() + "\t";
+                tempString += doc.Rank + "\t";
+                tempString += doc.Score + "\t";
+                tempString += groupName + "\n";
+
+                evalList.Add(tempString);
             }
+
+            // write file
+            FileHandling.WriteTextFile(evalList, fileName, true);
 
             return 0;
         }
