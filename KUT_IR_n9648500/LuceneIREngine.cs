@@ -24,7 +24,8 @@ namespace KUT_IR_n9648500
         public string originalQuery = "";
         public string processedQuery = "";
 
-        TopDocs searchResults;
+        private TopDocs searchResults;
+        private const int maxResults = 1400; // 1400 docs in provided collection
 
         public float indexTime;
         public float queryTime;
@@ -140,7 +141,7 @@ namespace KUT_IR_n9648500
 			querytext = querytext.ToLower();
 			Query query = parser.Parse(querytext);
 
-			TopDocs results = searcher.Search(query, 1400);
+			TopDocs results = searcher.Search(query, maxResults);
 
             return results;
 		}
@@ -283,7 +284,7 @@ namespace KUT_IR_n9648500
 		}
 
         /// Writes a trec evaluation file from the search results.
-        public int WriteEvalFile(string fileName, IRCollection results)
+        public int WriteEvalFile(string fileName, string topicID, IRCollection results)
         {
             List<string> evalList = new List<string>();
 
@@ -312,9 +313,6 @@ namespace KUT_IR_n9648500
                     }
                 }
             }
-
-            // need to get this from user or automatically
-            string topicID = "101";
 
             // this is fixed
             string groupName = "09648500_NathanOnly";

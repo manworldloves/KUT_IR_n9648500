@@ -86,12 +86,12 @@ namespace KUT_IR_n9648500
         public override IRQueryParams GetQueryParams()
         {
             string[] fields = new string[] { "title", "words" };
-            float[] fieldBoost = new float[] { 5.0f, 5.0f };
-            bool removeStopWords = true;
+            float[] fieldBoost = new float[] { 1.0f, 1.0f };
+            bool removeStopWords = false;
             int nGrams = 2;
-            float nGramBoost = 2.5f;
-            bool addSynonyms = true;
-            float synonymBoost = 1.0f;
+            float nGramBoost = 0.5f;
+            bool addSynonyms = false;
+            float synonymBoost = 0.5f;
 
             IRQueryParams querySettings = new IRQueryParams(fields, fieldBoost,
                                                            removeStopWords,

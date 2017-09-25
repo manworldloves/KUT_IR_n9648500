@@ -15,6 +15,7 @@ namespace KUT_IR_n9648500
     {
         LuceneIREngine myIREngine = new LuceneIREngine();
         string queryText;
+        string topicID = "000";
 
         public frmQuery()
         {
@@ -53,7 +54,7 @@ namespace KUT_IR_n9648500
                 // open query dialog
                 if (numberOfResults > 0)
                 {
-                    Form resultsForm = new frmResults(myIREngine);
+                    Form resultsForm = new frmResults(myIREngine, topicID);
                     resultsForm.Show();
                 }
                 else
@@ -86,11 +87,11 @@ namespace KUT_IR_n9648500
             // wait for user to select a query
 
             // set the query text if the use has selected a query
-            string topicID = getQuery.SelectedTopicID;
-            if (topicID != "")
+            topicID = getQuery.SelectedTopicID;
+            if (topicID != "000")
             {
-                string queryText = infoNeeds[topicID];
-                txtQuery.Text = queryText;
+                string stdQueryText = infoNeeds[topicID];
+                txtQuery.Text = stdQueryText;
             }
 
         }

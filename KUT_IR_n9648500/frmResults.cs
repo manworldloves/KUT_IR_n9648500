@@ -16,16 +16,18 @@ namespace KUT_IR_n9648500
         LuceneIREngine myIREngine = new LuceneIREngine();
         IRCollection myResultCollection;
         int pageNumber;
+        string topicID;
 
         public frmResults()
         {
             InitializeComponent();
         }
 
-        public frmResults(LuceneIREngine IREngine)
+        public frmResults(LuceneIREngine IREngine, string topic)
         {
             InitializeComponent();
             myIREngine = IREngine;
+            topicID = topic;
             pageNumber = 0;
 
             /// good tutorial
@@ -106,7 +108,7 @@ namespace KUT_IR_n9648500
             saveFileDialog.Filter = "Text files (*.txt)|*.txt";
             saveFileDialog.ShowDialog();
             string fileName = saveFileDialog.FileName;
-            myIREngine.WriteEvalFile(fileName, myResultCollection);
+            myIREngine.WriteEvalFile(fileName, topicID, myResultCollection);
         }
 
         private void btnClearResults_Click(object sender, EventArgs e)
