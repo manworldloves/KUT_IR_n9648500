@@ -63,6 +63,12 @@ namespace KUT_IR_n9648500
         /// </summary>
         /// <param name="searcher">Searcher.</param>
         /// <param name="results">Results.</param>
+        public IRCollection()
+        {
+            //default constructor
+            collectionDocs = new List<IRDocument>();
+        }
+
         public IRCollection(IndexSearcher searcher, TopDocs results)
         {
             List<IRDocument> collection = new List<IRDocument>();
@@ -90,6 +96,11 @@ namespace KUT_IR_n9648500
             }
 
             collectionDocs = collection;
+        }
+
+        public void Add(string docText)
+        {
+            collectionDocs.Add(new JournalAbstract(docText));
         }
 
         public void IndexCollection(Lucene.Net.Index.IndexWriter writer)

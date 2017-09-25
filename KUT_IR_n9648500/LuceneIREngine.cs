@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections.Concurrent; // for threading
 using Lucene.Net.Analysis; // for Analyser
 using Lucene.Net.Documents; // for Document and Field
 using Lucene.Net.Index; //for Index Writer
@@ -96,11 +97,13 @@ namespace KUT_IR_n9648500
             // get all of the files names in the collection path
             List<string> filenames = FileHandling.GetFileNames(collectionPath, false);
 
+            // THREADING - try doing these two tasks in parallel
+            // need 
             // get the text from all of the files
-            List<string> collectionText = OpenCollectionFiles(filenames);
+            //List<string> collectionText = OpenCollectionFiles(filenames);
 
             // turn the raw text into a Collection of objects
-            IRCollection collection = new IRCollection(collectionText);
+            IRCollection collection = ReadAndProcessFiles(filenames);
 
             // get the query parameters of the collection (to be used later)
             queryParams = collection.GetQueryParams();
@@ -335,6 +338,55 @@ namespace KUT_IR_n9648500
             FileHandling.WriteTextFile(evalList, fileName, appendFlag);
 
             return 0;
+        }
+
+        private IRCollection ReadAndProcessFiles(List<string> fileNames)
+        {
+            IRCollection collection = new IRCollection();
+
+            // Our thread-safe collection used for the handover.
+            var files = new BlockingCollection<string>();
+
+            // Build the pipeline.
+            var readFile = Task.Run(() =>
+            {
+                try
+                {
+                    foreach (string fn in fileNames)
+					{
+						string document = FileHandling.ReadTextFile(fn);
+						if (document != "")
+						{
+                            files.Add(document);
+						}
+						else
+						{
+							MessageBox.Show("Problem opening file:\n\n" + fn);
+						}
+					}
+                }
+                finally
+                {
+                    files.CompleteAdding();
+                }
+            });
+
+            var processFile = Task.Run(() =>
+            {
+                // Process lines on a ThreadPool thread
+                // as soon as they become available.
+                foreach (var file in files.GetConsumingEnumerable())
+                {
+                    collection.Add(file);
+                }
+            });
+
+            // Block until both tasks have completed.
+            // This makes this method prone to deadlocking.
+            // Consider using 'await Task.WhenAll' instead.
+            Task.WaitAll(readFile, processFile);
+
+            return collection;
         }
     }
 }
