@@ -35,8 +35,8 @@
             this.lblTitle = new System.Windows.Forms.Label();
             this.lblAuthor = new System.Windows.Forms.Label();
             this.lblBib = new System.Windows.Forms.Label();
-            this.lblAbstract = new System.Windows.Forms.Label();
             this.btnOK = new System.Windows.Forms.Button();
+            this.tbAbstract = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // lblTitleText
@@ -54,7 +54,7 @@
             // 
             this.lblAuthorText.AutoSize = true;
             this.lblAuthorText.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblAuthorText.Location = new System.Drawing.Point(155, 126);
+            this.lblAuthorText.Location = new System.Drawing.Point(155, 148);
             this.lblAuthorText.Name = "lblAuthorText";
             this.lblAuthorText.Size = new System.Drawing.Size(68, 20);
             this.lblAuthorText.TabIndex = 0;
@@ -65,7 +65,7 @@
             // 
             this.lblBibText.AutoSize = true;
             this.lblBibText.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblBibText.Location = new System.Drawing.Point(9, 176);
+            this.lblBibText.Location = new System.Drawing.Point(9, 198);
             this.lblBibText.Name = "lblBibText";
             this.lblBibText.Size = new System.Drawing.Size(214, 20);
             this.lblBibText.TabIndex = 0;
@@ -76,7 +76,7 @@
             // 
             this.lblAbstractText.AutoSize = true;
             this.lblAbstractText.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblAbstractText.Location = new System.Drawing.Point(141, 226);
+            this.lblAbstractText.Location = new System.Drawing.Point(141, 248);
             this.lblAbstractText.Name = "lblAbstractText";
             this.lblAbstractText.Size = new System.Drawing.Size(82, 20);
             this.lblAbstractText.TabIndex = 0;
@@ -97,7 +97,7 @@
             // 
             this.lblAuthor.AutoSize = true;
             this.lblAuthor.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblAuthor.Location = new System.Drawing.Point(262, 126);
+            this.lblAuthor.Location = new System.Drawing.Point(262, 148);
             this.lblAuthor.Name = "lblAuthor";
             this.lblAuthor.Size = new System.Drawing.Size(63, 20);
             this.lblAuthor.TabIndex = 1;
@@ -107,21 +107,11 @@
             // 
             this.lblBib.AutoSize = true;
             this.lblBib.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblBib.Location = new System.Drawing.Point(262, 176);
+            this.lblBib.Location = new System.Drawing.Point(262, 198);
             this.lblBib.Name = "lblBib";
             this.lblBib.Size = new System.Drawing.Size(135, 20);
             this.lblBib.TabIndex = 1;
             this.lblBib.Text = "[bibliographic info]";
-            // 
-            // lblAbstract
-            // 
-            this.lblAbstract.AutoSize = true;
-            this.lblAbstract.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblAbstract.Location = new System.Drawing.Point(262, 226);
-            this.lblAbstract.Name = "lblAbstract";
-            this.lblAbstract.Size = new System.Drawing.Size(75, 20);
-            this.lblAbstract.TabIndex = 1;
-            this.lblAbstract.Text = "[abstract]";
             // 
             // btnOK
             // 
@@ -133,13 +123,24 @@
             this.btnOK.UseVisualStyleBackColor = true;
             this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
             // 
+            // tbAbstract
+            // 
+            this.tbAbstract.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tbAbstract.Location = new System.Drawing.Point(266, 248);
+            this.tbAbstract.Multiline = true;
+            this.tbAbstract.Name = "tbAbstract";
+            this.tbAbstract.ReadOnly = true;
+            this.tbAbstract.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.tbAbstract.Size = new System.Drawing.Size(479, 245);
+            this.tbAbstract.TabIndex = 3;
+            // 
             // frmDetail
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(922, 599);
+            this.Controls.Add(this.tbAbstract);
             this.Controls.Add(this.btnOK);
-            this.Controls.Add(this.lblAbstract);
             this.Controls.Add(this.lblBib);
             this.Controls.Add(this.lblAuthor);
             this.Controls.Add(this.lblTitle);
@@ -163,7 +164,7 @@
         private System.Windows.Forms.Label lblTitle;
         private System.Windows.Forms.Label lblAuthor;
         private System.Windows.Forms.Label lblBib;
-        private System.Windows.Forms.Label lblAbstract;
         private System.Windows.Forms.Button btnOK;
+        private System.Windows.Forms.TextBox tbAbstract;
     }
 }

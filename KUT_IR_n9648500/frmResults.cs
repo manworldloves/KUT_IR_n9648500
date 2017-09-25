@@ -30,13 +30,11 @@ namespace KUT_IR_n9648500
 
             /// good tutorial
             /// https://docs.microsoft.com/en-us/dotnet/framework/winforms/controls/walkthrough-creating-an-unbound-windows-forms-datagridview-control
-            /// 
-            //List<IRDocument> 
-            //TopDocs results =
+            ///
             myResultCollection = myIREngine.BuildResults();
 
             // setup datagrid
-            SetupDataGrid(myResultCollection.GetIRDocument(0).GetResultSummaryColNames());
+            SetupDataGrid(myResultCollection.GetIRDocument(0).GetResultSummaryColDetails());
             PopulateDataGrid(0);
 
             // setup buttons
@@ -53,13 +51,16 @@ namespace KUT_IR_n9648500
 
         }
 
-        private void SetupDataGrid(string[] colNames)
+        private void SetupDataGrid(Dictionary<string, float> colDetails)
         {
+            string[] colNames = colDetails.Keys.ToArray();
+            int dgWidth = dgSearchResults.Width;
             dgSearchResults.ColumnCount = colNames.Length;
             for (int i = 0; i < colNames.Length; i++)
             {
                 dgSearchResults.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
                 dgSearchResults.Columns[i].Name = colNames[i];
+                dgSearchResults.Columns[i].Width = (int)(dgWidth * colDetails[colNames[i]]);
             }
 			dgSearchResults.MultiSelect = false;
 			dgSearchResults.SelectionMode = DataGridViewSelectionMode.FullRowSelect;

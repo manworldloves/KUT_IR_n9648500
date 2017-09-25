@@ -58,6 +58,7 @@
             this.btnGetQuery.TabIndex = 2;
             this.btnGetQuery.Text = "Get Query";
             this.btnGetQuery.UseVisualStyleBackColor = true;
+            this.btnGetQuery.Click += new System.EventHandler(this.btnGetQuery_Click);
             // 
             // frmQuerySelect
             // 

@@ -21,7 +21,7 @@ namespace KUT_IR_n9648500
         {
             InitializeComponent();
             JournalAbstract JAdoc = doc as JournalAbstract;
-            lblAbstract.Text = JAdoc.Words;
+            tbAbstract.Text = JAdoc.Words;
             lblBib.Text = JAdoc.BiblioInfo;
             lblAuthor.Text = JAdoc.Author;
             lblTitle.Text = JAdoc.Title;

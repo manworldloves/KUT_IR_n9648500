@@ -17,7 +17,7 @@ namespace KUT_IR_n9648500
         public abstract void AddToIndex(Lucene.Net.Index.IndexWriter writer);
         public abstract IRQueryParams GetQueryParams();
         public abstract string[] GetResultSummary();
-        public abstract string[] GetResultSummaryColNames();
+        public abstract Dictionary<string, float> GetResultSummaryColDetails();
         public abstract string GetDocID();
 
     }

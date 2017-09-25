@@ -41,8 +41,7 @@ namespace KUT_IR_n9648500
 
             // title is also part of words - strip it out
             docParts[4] = docParts[4].Substring(title.Length+1);
-
-            words = TextProcessing.Unix2Dos(docParts[4].Trim());
+            words = docParts[4].Trim();
         }
 
         public JournalAbstract(Document doc, int rank, float score)
@@ -102,9 +101,16 @@ namespace KUT_IR_n9648500
             return querySettings;
         }
 
-        public override string[] GetResultSummaryColNames()
+        public override Dictionary<string, float> GetResultSummaryColDetails()
         {
-            return new string[] { "Title", "Author", "Bibliographic Info", "Abstract" };
+            Dictionary<string, float> colDetails = new Dictionary<string, float>();
+
+            colDetails.Add("Title", 0.3f);
+            colDetails.Add("Author", 0.1f);
+            colDetails.Add("Bibliographic Info", 0.1f);
+            colDetails.Add("Abstract", 0.5f);
+
+            return colDetails;
         }
         
         public override string[] GetResultSummary()

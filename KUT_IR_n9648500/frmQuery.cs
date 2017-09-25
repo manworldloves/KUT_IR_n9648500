@@ -70,13 +70,29 @@ namespace KUT_IR_n9648500
 
         private void btnOpenQueryFile_Click(object sender, EventArgs e)
         {
+            // get the infoneeds txt file
+            openFileDialog.Filter = "Text Files (*.txt)|*.txt";
+            openFileDialog.FileName = "";
             openFileDialog.ShowDialog();
             string selectedFile = openFileDialog.FileName;
 
+            // turn the file into a dictionary
             Dictionary<string, string> infoNeeds = InfoNeeds.GetInfoNeeds(selectedFile);
 
+            // open form for user to select query
             frmQuerySelect getQuery = new frmQuerySelect(infoNeeds);
-            getQuery.Show();
+            getQuery.ShowDialog();
+            
+            // wait for user to select a query
+
+            // set the query text if the use has selected a query
+            string topicID = getQuery.SelectedTopicID;
+            if (topicID != "")
+            {
+                string queryText = infoNeeds[topicID];
+                txtQuery.Text = queryText;
+            }
+
         }
     }
 }

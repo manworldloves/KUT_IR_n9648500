@@ -23,7 +23,7 @@ namespace KUT_IR_n9648500
             // build dicationary from string array
             for (int i = 0; i < docParts.Length; i++)
             {
-                iNeeds.Add(docParts[i], docParts[i + 1]);
+                iNeeds.Add(docParts[i].Trim(), docParts[i + 1].Trim());
 
                 // inc i so that it goes up 2 each iteration
                 i++;

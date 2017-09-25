@@ -140,7 +140,7 @@ namespace KUT_IR_n9648500
 			querytext = querytext.ToLower();
 			Query query = parser.Parse(querytext);
 
-			TopDocs results = searcher.Search(query, 1000);
+			TopDocs results = searcher.Search(query, 1400);
 
             return results;
 		}
