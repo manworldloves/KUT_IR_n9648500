@@ -44,9 +44,10 @@ namespace KUT_IR_n9648500
 			analyzer = new Lucene.Net.Analysis.Standard.StandardAnalyzer(VERSION);
         }
 
+        #region Index
         /// helper function for CreateIndex()
         // sets up lucene index ready for adding documents
-		private void InitIndex(string indexPath)
+        private void InitIndex(string indexPath)
 		{
 			luceneIndexDirectory = Lucene.Net.Store.FSDirectory.Open(indexPath);
 			IndexWriter.MaxFieldLength mfl = new IndexWriter.MaxFieldLength(IndexWriter.DEFAULT_MAX_FIELD_LENGTH);
@@ -119,10 +120,12 @@ namespace KUT_IR_n9648500
 
             return 0;
         }
+        #endregion
 
+        #region Query
         /// helper function for RunQuery()
         // create the searcher object
-		private void CreateSearcher()
+        private void CreateSearcher()
 		{
 			searcher = new IndexSearcher(luceneIndexDirectory);
 			//searcher.Similarity = newSimilarity;
@@ -254,8 +257,8 @@ namespace KUT_IR_n9648500
 			TimeSpan duration = end - start;
 			queryTime = duration.Seconds + (float)duration.Milliseconds/1000;
 
-            MessageBox.Show("Time to query: " + queryTime + " seconds.");
-            MessageBox.Show("Number of results is " + searchResults.TotalHits);
+            //MessageBox.Show("Time to query: " + queryTime + " seconds.");
+            //MessageBox.Show("Number of results is " + searchResults.TotalHits);
 
             // dodgy results display
             //DisplaySearchResults(searchResults);
@@ -264,10 +267,11 @@ namespace KUT_IR_n9648500
 
 			return searchResults.TotalHits;
         }
+#endregion
 
         /// Builds an IRCollection from the search results.
         //  This is used to display the search results.
-		public IRCollection BuildResults()
+        public IRCollection BuildResults()
 		{
 			CreateSearcher();
 
@@ -283,11 +287,37 @@ namespace KUT_IR_n9648500
         {
             List<string> evalList = new List<string>();
 
+            bool appendFlag = true;
+            // check if the file exists
+            if (System.IO.File.Exists(fileName) == true)
+            {
+                // prompt for append
+                DialogResult append = MessageBox.Show("Do you want to append to the existing file?",
+                                                      "Confirm",
+                                                      MessageBoxButtons.YesNo);
+
+                if (append == DialogResult.Yes)
+                {
+                    appendFlag = true;
+                }
+                else
+                {
+                    // if overwrite confirm
+                    DialogResult ruSure = MessageBox.Show("Are you sure you want to overwrite the file?",
+                                                          "Confirm",
+                                                          MessageBoxButtons.YesNo);
+                    if (ruSure == DialogResult.Yes)
+                    {
+                        appendFlag = false;
+                    }
+                }
+            }
+
             // need to get this from user or automatically
             string topicID = "101";
 
             // this is fixed
-            string groupName = "n9648500_NathanOnly";
+            string groupName = "09648500_NathanOnly";
 
             // structure TopicID QO DocID rank score group
             string tempString = "";
@@ -304,7 +334,7 @@ namespace KUT_IR_n9648500
             }
 
             // write file
-            FileHandling.WriteTextFile(evalList, fileName, true);
+            FileHandling.WriteTextFile(evalList, fileName, appendFlag);
 
             return 0;
         }

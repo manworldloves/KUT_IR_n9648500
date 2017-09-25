@@ -14,8 +14,16 @@ namespace KUT_IR_n9648500
     {
         public frmQuerySelect()
         {
+            // default constructor
             InitializeComponent();
         }
+
+		public frmQuerySelect(Dictionary<string, string> infoNeeds)
+		{
+			InitializeComponent();
+            lbQueries.SelectionMode = SelectionMode.One;
+            lbQueries.Items.AddRange(infoNeeds.Keys.ToArray());
+		}
 
     }
 }

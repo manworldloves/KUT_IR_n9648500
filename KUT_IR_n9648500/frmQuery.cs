@@ -73,7 +73,10 @@ namespace KUT_IR_n9648500
             openFileDialog.ShowDialog();
             string selectedFile = openFileDialog.FileName;
 
-            MessageBox.Show(selectedFile);
+            Dictionary<string, string> infoNeeds = InfoNeeds.GetInfoNeeds(selectedFile);
+
+            frmQuerySelect getQuery = new frmQuerySelect(infoNeeds);
+            getQuery.Show();
         }
     }
 }

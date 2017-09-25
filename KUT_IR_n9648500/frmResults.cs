@@ -38,15 +38,19 @@ namespace KUT_IR_n9648500
             // setup datagrid
             SetupDataGrid(myResultCollection.GetIRDocument(0).GetResultSummaryColNames());
             PopulateDataGrid(0);
+
+            // setup buttons
             btnPrevious.Enabled = false;
             if (myResultCollection.Length() <= 10)
                 btnNext.Enabled = false;
-            dgSearchResults.MultiSelect = false;
-            dgSearchResults.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgSearchResults.ReadOnly = true;
+            
+            // report total results and query time
+            lblTotalResults.Text = "Total Results: " + myResultCollection.Length();
+            lblQueryTime.Text = "Time to query: " + myIREngine.queryTime + " sec";
 
-            JournalAbstract toprank = myResultCollection.GetIRDocument(0) as JournalAbstract;
-            MessageBox.Show("Top doc is docID: " + toprank.DocID);
+            //JournalAbstract toprank = myResultCollection.GetIRDocument(0) as JournalAbstract;
+            //MessageBox.Show("Top doc is docID: " + toprank.DocID);
+
         }
 
         private void SetupDataGrid(string[] colNames)
@@ -57,6 +61,9 @@ namespace KUT_IR_n9648500
                 dgSearchResults.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
                 dgSearchResults.Columns[i].Name = colNames[i];
             }
+			dgSearchResults.MultiSelect = false;
+			dgSearchResults.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+			dgSearchResults.ReadOnly = true;
 
         }
 
@@ -93,13 +100,17 @@ namespace KUT_IR_n9648500
 
         private void btnSaveResults_Click(object sender, EventArgs e)
         {
-            myIREngine.WriteEvalFile(@"../../nathan_eval.txt", myResultCollection);
+            saveFileDialog.CheckFileExists = false;
+            saveFileDialog.OverwritePrompt = false;
+            saveFileDialog.Filter = "Text files (*.txt)|*.txt";
+            saveFileDialog.ShowDialog();
+            string fileName = saveFileDialog.FileName;
+            myIREngine.WriteEvalFile(fileName, myResultCollection);
         }
 
         private void btnClearResults_Click(object sender, EventArgs e)
         {
-            // temporarily here because of mac
-            DisplayDetailedResults();
+ 
         }
 
         private void btnPrevious_Click(object sender, EventArgs e)
@@ -131,7 +142,7 @@ namespace KUT_IR_n9648500
 
         private void dgSearchResults_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-
+            // do nothing
         }
 
         private void dgSearchResults_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
@@ -146,7 +157,7 @@ namespace KUT_IR_n9648500
 
         private void btnOpenDetails_Click(object sender, EventArgs e)
         {
-
+            DisplayDetailedResults();
         }
     }
 }
