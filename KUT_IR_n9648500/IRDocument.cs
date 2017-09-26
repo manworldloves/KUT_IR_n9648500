@@ -58,12 +58,11 @@ namespace KUT_IR_n9648500
     {
         private List<IRDocument> collectionDocs;
 
-        
-        /// <summary>
-        /// Update the custom doc type in the constructors
-        /// </summary>
-        /// <param name="searcher">Searcher.</param>
-        /// <param name="results">Results.</param>
+        ///
+        /// Update the custom doc constructors in these methods:
+        /// 1. cstr IRCollection(IndexSearch, TopDocs)
+        /// 2. IRDocument Add(string)
+        /// 
         public IRCollection()
         {
             //default constructor
@@ -87,44 +86,13 @@ namespace KUT_IR_n9648500
             }
         }
 
-
-        public IRCollection(List<String> collectionText)
+        public IRDocument Add(string docText)
         {
-            List<IRDocument> collection = new List<IRDocument>();
+            IRDocument doc = new JournalAbstract(docText);
 
-            //var paraCollectionText = collectionText.AsParallel();
-
-            //paraCollectionText.ForAll(text => 
-            //                          collection.Add(new JournalAbstract(text)));
-
-
-            foreach (string text in collectionText)
-            {
-                collection.Add(new JournalAbstract(text));
-            }
-
-
-            collectionDocs = collection;
-        }
-
-        public void Add(IRDocument doc)
-        {
             collectionDocs.Add(doc);
-        }
 
-        public void IndexCollection(Lucene.Net.Index.IndexWriter writer)
-        {
-            var paraCollectionDocs = collectionDocs.AsParallel();
-
-            paraCollectionDocs.ForAll(doc =>
-                                      doc.AddToIndex(writer));
-
-            /*
-            foreach (IRDocument doc in collectionDocs)
-            {
-                doc.AddToIndex(writer);
-            } 
-            */
+            return doc;
         }
 
         public IRQueryParams GetQueryParams()
@@ -142,19 +110,6 @@ namespace KUT_IR_n9648500
             return collectionDocs.Count;
         }
 
-
-        public void BuildResults(IndexSearcher searcher, TopDocs results)
-        {
-            int rank;
-            float score;
-            for (int i = 0; i < results.TotalHits; i++)
-            {
-                rank = i + 1;
-                score = results.ScoreDocs[i].Score;
-                Document doc = searcher.Doc(results.ScoreDocs[i].Doc);
-                collectionDocs.Add(new JournalAbstract(doc, rank, score));
-            }
-        }
     }
 
 }
