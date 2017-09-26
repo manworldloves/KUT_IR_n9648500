@@ -214,7 +214,7 @@ namespace KUT_IR_n9648500
             // start timer...
             DateTime start = DateTime.Now;
 
-            originalQuery = text;
+            //originalQuery = text;
 
             CreateSearcher();
 
@@ -226,8 +226,9 @@ namespace KUT_IR_n9648500
                 processedQuery = text;
             }*/
 
+            // preprocessing text
             List<string> tokens = TextProcessing.TokeniseString(text);
-            tokens = TextProcessing.RemoveStopWords(tokens);
+            //tokens = TextProcessing.RemoveStopWords(tokens);
             string partA = string.Join(" ", tokens);
             List<string> bigrams = TextProcessing.getNGrams(tokens, 2);
             string partB = string.Join(" ", bigrams);
@@ -262,12 +263,12 @@ namespace KUT_IR_n9648500
             Query queryB = parserB.Parse(partB);
 
             bQuery.Add(queryA, Occur.SHOULD);
-            bQuery.Add(queryB, Occur.SHOULD);
+            bQuery.Add(queryB, Occur.MUST);
             //searchResults = SearchText(text);
 
 			//Query query = parser.Parse(querytext);
 
-			TopDocs results = searcher.Search(bQuery, maxResults);
+			searchResults = searcher.Search(bQuery, maxResults);
 
             // end timer and calculate total time
             DateTime end = DateTime.Now;
