@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 using System.Collections.Concurrent; // for threading
 using Lucene.Net.Analysis; // for Analyser
 using Lucene.Net.Documents; // for Document and Field
@@ -72,7 +73,9 @@ namespace KUT_IR_n9648500
         {
         	List<string> documents = new List<string>();
 
-        	foreach (string fn in fileNames)
+            //var parFilenames = fileNames.AsParallel();
+
+            Parallel.ForEach (fileNames, fn =>
         	{
         		string document = FileHandling.ReadTextFile(fn);
         		if (document != "")
@@ -83,7 +86,7 @@ namespace KUT_IR_n9648500
         		{
                     System.Windows.Forms.MessageBox.Show("Problem opening file:\n\n" + fn);
         		}
-        	}
+            });
 
             return documents;
         }
@@ -103,6 +106,7 @@ namespace KUT_IR_n9648500
             //List<string> collectionText = OpenCollectionFiles(filenames);
 
             // turn the raw text into a Collection of objects
+            //IRCollection collection = new IRCollection(collectionText);
             IRCollection collection = ReadAndProcessFiles(filenames);
 
             // get the query parameters of the collection (to be used later)
@@ -340,9 +344,29 @@ namespace KUT_IR_n9648500
             return 0;
         }
 
+        /*
+        private IRCollection ReadAndProcessFiles1(List<string> fileNames)
+        {
+			IRCollection collection = new IRCollection();
+
+            int midpoint = fileNames.Count / 2;
+            List<string> fn1 = fileNames.GetRange(0, midpoint);
+            List<string> fn2 = fileNames.GetRange(midpoint, fileNames.Count - midpoint);
+
+            //Thread first = new Thread(new ThreadStart();
+
+            return collection;
+		}
+
+        private IRCollection BuildIRCollection(List<string> filenames)
+        {
+            return new IRCollection(filenames);
+        }*/
+
         private IRCollection ReadAndProcessFiles(List<string> fileNames)
         {
             IRCollection collection = new IRCollection();
+            //var paraFN = fileNames.AsParallel();
 
             // Our thread-safe collection used for the handover.
             var files = new BlockingCollection<string>();
@@ -352,18 +376,21 @@ namespace KUT_IR_n9648500
             {
                 try
                 {
-                    foreach (string fn in fileNames)
-					{
-						string document = FileHandling.ReadTextFile(fn);
-						if (document != "")
-						{
+                    //foreach (string fn in fileNames)
+                    //paraFN.ForAll(fn =>
+                    Parallel.ForEach(fileNames, fn =>
+                    {
+                        string document = FileHandling.ReadTextFile(fn);
+                        if (document != "")
+                        {
                             files.Add(document);
-						}
-						else
-						{
-							MessageBox.Show("Problem opening file:\n\n" + fn);
-						}
-					}
+                        }
+                        else
+                        {
+                            MessageBox.Show("Problem opening file:\n\n" + fn);
+                        }
+                    });
+                    //}
                 }
                 finally
                 {
