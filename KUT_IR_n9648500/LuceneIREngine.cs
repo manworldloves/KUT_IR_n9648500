@@ -73,9 +73,9 @@ namespace KUT_IR_n9648500
         {
         	List<string> documents = new List<string>();
 
-            //var parFilenames = fileNames.AsParallel();
+            var parFilenames = fileNames.AsParallel();
 
-            Parallel.ForEach (fileNames, fn =>
+            parFilenames.ForAll (fn =>
         	{
         		string document = FileHandling.ReadTextFile(fn);
         		if (document != "")
@@ -84,7 +84,7 @@ namespace KUT_IR_n9648500
         		}
         		else
         		{
-                    System.Windows.Forms.MessageBox.Show("Problem opening file:\n\n" + fn);
+                    MessageBox.Show("Problem opening file:\n\n" + fn);
         		}
             });
 
@@ -107,16 +107,21 @@ namespace KUT_IR_n9648500
 
             // turn the raw text into a Collection of objects
             //IRCollection collection = new IRCollection(collectionText);
-            IRCollection collection = ReadAndProcessFiles(filenames);
-
-            // get the query parameters of the collection (to be used later)
-            queryParams = collection.GetQueryParams();
+            DateTime mid = System.DateTime.Now;
 
             // initialise the index
             InitIndex(indexPath);
 
-            // build the index
-            collection.IndexCollection(writer);
+            DateTime index1 = DateTime.Now;
+
+			// build the index
+			//collection.IndexCollection(writer);
+			IRCollection collection = ReadAndProcessFiles(filenames);
+            //collection.IndexCollection(writer);
+			// get the query parameters of the collection (to be used later)
+			queryParams = collection.GetQueryParams();
+
+            DateTime index2 = DateTime.Now;
 
             // close the index
             CleanUpIndex();
@@ -125,6 +130,26 @@ namespace KUT_IR_n9648500
             DateTime end = System.DateTime.Now;
             TimeSpan duration = end - start;
             indexTime = duration.Seconds + (float)duration.Milliseconds/1000;
+
+            TimeSpan readSpan = mid - start;
+            float midTime = readSpan.Seconds + (float)readSpan.Milliseconds / 1000;
+
+            TimeSpan index1span = index1 - mid;
+            float index1time = index1span.Seconds + (float)index1span.Milliseconds / 1000;
+
+			TimeSpan index2span = index2 - index1;
+			float index2time = index2span.Seconds + (float)index2span.Milliseconds / 1000;
+
+            TimeSpan writeSpan = end - index2;
+            float writeTime = writeSpan.Seconds + (float)writeSpan.Milliseconds / 1000;
+
+            string timeText = "Time to read files: " + midTime +
+                "\nTime to init index: " + index1time +
+                "\nTime to build index: " + index2time +
+                "\nTime to cleanup index: " + writeTime +
+                "\nTotal time to create index: " + indexTime;
+
+            System.Windows.Forms.MessageBox.Show(timeText);
 
             return 0;
         }
@@ -365,8 +390,25 @@ namespace KUT_IR_n9648500
 
         private IRCollection ReadAndProcessFiles(List<string> fileNames)
         {
-            IRCollection collection = new IRCollection();
+			IRCollection collection = new IRCollection();
             //var paraFN = fileNames.AsParallel();
+
+            Parallel.ForEach(fileNames, fn =>
+            {
+                string docText = FileHandling.ReadTextFile(fn);
+                IRDocument doc = new JournalAbstract(docText);
+                doc.AddToIndex(writer);
+                collection.Add(doc);
+
+            });
+                     
+            return collection;
+		}
+
+        private IRCollection ReadAndProcessFiles1(List<string> fileNames)
+        {
+            IRCollection collection = new IRCollection();
+            var paraFN = fileNames.AsParallel();
 
             // Our thread-safe collection used for the handover.
             var files = new BlockingCollection<string>();
@@ -376,9 +418,9 @@ namespace KUT_IR_n9648500
             {
                 try
                 {
-                    //foreach (string fn in fileNames)
+                    foreach (string fn in fileNames)
                     //paraFN.ForAll(fn =>
-                    Parallel.ForEach(fileNames, fn =>
+                    //Parallel.ForEach(fileNames, fn =>
                     {
                         string document = FileHandling.ReadTextFile(fn);
                         if (document != "")
@@ -389,8 +431,8 @@ namespace KUT_IR_n9648500
                         {
                             MessageBox.Show("Problem opening file:\n\n" + fn);
                         }
-                    });
-                    //}
+                    //});
+                    }
                 }
                 finally
                 {
@@ -404,7 +446,7 @@ namespace KUT_IR_n9648500
                 // as soon as they become available.
                 foreach (var file in files.GetConsumingEnumerable())
                 {
-                    collection.Add(file);
+                    //collection.Add(file);
                 }
             });
 

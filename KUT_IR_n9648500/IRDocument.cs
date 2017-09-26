@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using Lucene.Net.Search;
 using Lucene.Net.Documents;
+using System.Linq;
 
 namespace KUT_IR_n9648500
 {
@@ -90,25 +91,40 @@ namespace KUT_IR_n9648500
         public IRCollection(List<String> collectionText)
         {
             List<IRDocument> collection = new List<IRDocument>();
+
+            //var paraCollectionText = collectionText.AsParallel();
+
+            //paraCollectionText.ForAll(text => 
+            //                          collection.Add(new JournalAbstract(text)));
+
+
             foreach (string text in collectionText)
             {
                 collection.Add(new JournalAbstract(text));
             }
 
+
             collectionDocs = collection;
         }
 
-        public void Add(string docText)
+        public void Add(IRDocument doc)
         {
-            collectionDocs.Add(new JournalAbstract(docText));
+            collectionDocs.Add(doc);
         }
 
         public void IndexCollection(Lucene.Net.Index.IndexWriter writer)
         {
+            var paraCollectionDocs = collectionDocs.AsParallel();
+
+            paraCollectionDocs.ForAll(doc =>
+                                      doc.AddToIndex(writer));
+
+            /*
             foreach (IRDocument doc in collectionDocs)
             {
                 doc.AddToIndex(writer);
-            }    
+            } 
+            */
         }
 
         public IRQueryParams GetQueryParams()
