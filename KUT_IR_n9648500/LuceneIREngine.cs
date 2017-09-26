@@ -218,16 +218,24 @@ namespace KUT_IR_n9648500
 
             CreateSearcher();
 
+            /*
             // preprocess query
             if (preproc == true)
             {
                 text = PreprocessQuery(text);
                 processedQuery = text;
-            }
+            }*/
+
+            List<string> tokens = TextProcessing.TokeniseString(text);
+            tokens = TextProcessing.RemoveStopWords(tokens);
+            string partA = string.Join(" ", tokens);
+            List<string> bigrams = TextProcessing.getNGrams(tokens, 2);
+            string partB = string.Join(" ", bigrams);
 
             /// other options...
             // DefaultOperator - AND / OR
             // BooleanQuery - combine queries in different ways
+            BooleanQuery bQuery = new BooleanQuery();
 
             // get the query settings from the collection
             string[] queryFields = queryParams.Fields;
@@ -240,10 +248,26 @@ namespace KUT_IR_n9648500
                 boosts.Add(queryFields[i], queryFieldBoosts[i]);
             }
 
-            parser = new MultiFieldQueryParser(Lucene.Net.Util.Version.LUCENE_30,
-                                               queryFields, analyzer, boosts);
+            //parser = new MultiFieldQueryParser(Lucene.Net.Util.Version.LUCENE_30,
+            //                                   queryFields, analyzer, boosts);
 
-            searchResults = SearchText(text);
+			QueryParser parserA = new MultiFieldQueryParser(Lucene.Net.Util.Version.LUCENE_30,
+											   queryFields, analyzer, boosts);
+
+			QueryParser parserB = new MultiFieldQueryParser(Lucene.Net.Util.Version.LUCENE_30,
+											   queryFields, analyzer, boosts);
+
+
+            Query queryA = parserA.Parse(partA);
+            Query queryB = parserB.Parse(partB);
+
+            bQuery.Add(queryA, Occur.SHOULD);
+            bQuery.Add(queryB, Occur.SHOULD);
+            //searchResults = SearchText(text);
+
+			//Query query = parser.Parse(querytext);
+
+			TopDocs results = searcher.Search(bQuery, maxResults);
 
             // end timer and calculate total time
             DateTime end = DateTime.Now;
