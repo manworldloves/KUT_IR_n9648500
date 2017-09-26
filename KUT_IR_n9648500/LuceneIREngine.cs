@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Lucene.Net.Analysis; // for Analyser
+using Lucene.Net.Analysis.Snowball;
 using Lucene.Net.Documents; // for Document and Field
 using Lucene.Net.Index; //for Index Writer
 using Lucene.Net.Store; //for Directory
@@ -40,9 +41,9 @@ namespace KUT_IR_n9648500
         {
             luceneIndexDirectory = null;
             writer = null;
-            //ISet<string> stopWords = StopAnalyzer.ENGLISH_STOP_WORDS_SET;
-            //analyzer = new SnowballAnalyzer(VERSION, "English", stopWords);
-            analyzer = new Lucene.Net.Analysis.Standard.StandardAnalyzer(VERSION);
+            ISet<string> stopWords = StopAnalyzer.ENGLISH_STOP_WORDS_SET;
+            analyzer = new SnowballAnalyzer(VERSION, "English", stopWords);
+            //analyzer = new Lucene.Net.Analysis.Standard.StandardAnalyzer(VERSION);
         }
 
         #region Index
@@ -262,7 +263,7 @@ namespace KUT_IR_n9648500
             Query queryA = parserA.Parse(partA);
             Query queryB = parserB.Parse(partB);
 
-            bQuery.Add(queryA, Occur.SHOULD);
+            bQuery.Add(queryA, Occur.MUST);
             bQuery.Add(queryB, Occur.MUST);
             //searchResults = SearchText(text);
 
