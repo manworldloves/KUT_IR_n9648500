@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -40,7 +40,7 @@ namespace KUT_IR_n9648500
         public static List<string> TokeniseString(string text)
 		{
 			char[] delims = { ' ', '(', ')', '[', ']', '{', '}', '<', '>',
-				'-', ',', '.', '\'', '\"', ':', ';', '?', '!', '\n', '\r', '\t' };
+				'-', ',', '.', '\'', '\"', ':', ';', '?', '!' ,'\n', '\r', '\t'};
 
 			// put text in lower case
 			string lc_text = text.ToLower();
