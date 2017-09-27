@@ -16,6 +16,7 @@
 collection/
 index/
 code/
+*.txt
 
 # Build results
 [Dd]ebug/
