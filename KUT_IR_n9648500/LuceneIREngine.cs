@@ -233,7 +233,7 @@ namespace KUT_IR_n9648500
             List<string> tokens = TextProcessing.TokeniseString(text);
             //tokens = TextProcessing.RemoveStopWords(tokens);
             string partA = string.Join(" ", tokens);
-            List<string> bigrams = TextProcessing.getNGrams(tokens, 2);
+            List<string> bigrams = TextProcessing.getNGrams(tokens, 3);
             string partB = string.Join(" ", bigrams);
 
             /// other options...
