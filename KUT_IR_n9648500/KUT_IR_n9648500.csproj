@@ -123,6 +123,7 @@
     <Compile Include="IRDocument.cs" />
     <Compile Include="TextProcessing.cs" />
     <Compile Include="InfoNeeds.cs" />
+    <Compile Include="CustomSimilarity.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

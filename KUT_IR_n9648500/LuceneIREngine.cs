@@ -21,6 +21,7 @@ namespace KUT_IR_n9648500
         Lucene.Net.Index.IndexWriter writer;
         Lucene.Net.Search.IndexSearcher searcher;
         Lucene.Net.QueryParsers.QueryParser parser;
+        Similarity mySimilarity;
 
         public string originalQuery = "";
         public string processedQuery = "";
@@ -44,6 +45,7 @@ namespace KUT_IR_n9648500
             ISet<string> stopWords = StopAnalyzer.ENGLISH_STOP_WORDS_SET;
             analyzer = new SnowballAnalyzer(VERSION, "English", stopWords);
             //analyzer = new Lucene.Net.Analysis.Standard.StandardAnalyzer(VERSION);
+            mySimilarity = new CustomSimilarity();
         }
 
         #region Index
@@ -54,7 +56,7 @@ namespace KUT_IR_n9648500
             luceneIndexDirectory = Lucene.Net.Store.FSDirectory.Open(indexPath);
             IndexWriter.MaxFieldLength mfl = new IndexWriter.MaxFieldLength(IndexWriter.DEFAULT_MAX_FIELD_LENGTH);
             writer = new Lucene.Net.Index.IndexWriter(luceneIndexDirectory, analyzer, true, mfl);
-            //writer.SetSimilarity(newSimilarity);
+            writer.SetSimilarity(mySimilarity);
         }
 
         /// helper funciton for CreateIndex()
@@ -122,7 +124,7 @@ namespace KUT_IR_n9648500
         private void CreateSearcher()
         {
             searcher = new IndexSearcher(luceneIndexDirectory);
-            //searcher.Similarity = newSimilarity;
+            searcher.Similarity = mySimilarity;
         }
 
         /// helper function for RunQuery()
