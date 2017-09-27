@@ -88,7 +88,7 @@ namespace KUT_IR_n9648500
             string[] fields = new string[] { "title", "words" };
             float[] fieldBoost = new float[] { 1.0f, 1.0f };
             bool removeStopWords = false;
-            int nGrams = 2;
+            int nGrams = 3;
             float nGramBoost = 0.2f;
             bool addSynonyms = false;
             float synonymBoost = 0.5f;
