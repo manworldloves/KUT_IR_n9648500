@@ -27,20 +27,14 @@ namespace KUT_IR_n9648500
         {
             InitializeComponent();
             myIREngine = IREngine;
+            chkProcess.Checked = true;
+            tbProcQuery.Text = "";
+
         }
 
         private void chkProcess_CheckedChanged(object sender, EventArgs e)
         {
-			if (chkProcess.Checked == true)
-			{
-				queryText = myIREngine.PreprocessQuery(txtQuery.Text);
-			}
-			else
-			{
-				queryText = txtQuery.Text;
-			}
-
-			lblProcQuery.Text = queryText;
+            // nothing to do
         }
 
         private void btnQuery_Click(object sender, EventArgs e)
@@ -48,8 +42,11 @@ namespace KUT_IR_n9648500
             if (txtQuery.Text !="")
             {
                 // execute the query
+                string qText;
                 int numberOfResults = myIREngine.RunQuery(txtQuery.Text, 
-                                                          chkProcess.Checked);
+                                                          chkProcess.Checked, out qText);
+
+                tbProcQuery.Text = qText;
 
                 // open query dialog
                 if (numberOfResults > 0)
@@ -94,6 +91,11 @@ namespace KUT_IR_n9648500
                 txtQuery.Text = stdQueryText;
             }
 
+        }
+
+        private void btnAutoQuery_Click(object sender, EventArgs e)
+        {
+            // do stuff
         }
     }
 }

@@ -212,7 +212,7 @@ namespace KUT_IR_n9648500
         //  and queries the index.
         //  Calculates the total time to run the query
         //  and sets some text variables for later use.
-        public int RunQuery(string text, bool preproc)
+        public int RunQuery(string text, bool preproc, out string qText)
         {
             // start timer...
             DateTime start = DateTime.Now;
@@ -233,8 +233,11 @@ namespace KUT_IR_n9648500
             List<string> tokens = TextProcessing.TokeniseString(text);
             //tokens = TextProcessing.RemoveStopWords(tokens);
             string partA = string.Join(" ", tokens);
-            List<string> bigrams = TextProcessing.getNGrams(tokens, 3);
-            string partB = string.Join(" ", bigrams);
+
+            // build ngrams
+            int ngram_num = 3;
+            List<string> ngrams = TextProcessing.getNGrams(tokens, ngram_num);
+            string partB = string.Join(" ", ngrams);
 
             /// other options...
             // DefaultOperator - AND / OR
@@ -269,7 +272,9 @@ namespace KUT_IR_n9648500
             bQuery.Add(queryB, Occur.MUST);
             //searchResults = SearchText(text);
 
-			//Query query = parser.Parse(querytext);
+            //Query query = parser.Parse(querytext);
+
+            qText = bQuery.ToString();
 
 			searchResults = searcher.Search(bQuery, maxResults);
 

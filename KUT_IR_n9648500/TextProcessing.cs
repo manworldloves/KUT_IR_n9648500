@@ -58,7 +58,7 @@ namespace KUT_IR_n9648500
             if (n < 1 || n > tokens.Count)
 			{
 				System.Console.WriteLine("Invalid n value. Must be between 0 and length of input string.");
-				return new List<string>();
+				return new List<string>() { "\"" + string.Join(" ", tokens) + "\"" };
 			}
 
             List<string> nGrams = new List<string>();
