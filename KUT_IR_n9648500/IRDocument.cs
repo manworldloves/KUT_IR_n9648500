@@ -12,8 +12,8 @@ namespace KUT_IR_n9648500
         protected int rank;
         protected float score;
 
-        public int Rank { get { return rank; } }
-        public float Score { get { return score; } }
+        public int Rank { get { return rank; } set { rank = value; }}
+        public float Score { get { return score; } set { score = value; } }
 
         public abstract void AddToIndex(Lucene.Net.Index.IndexWriter writer);
         public abstract IRQueryParams GetQueryParams();
@@ -85,6 +85,27 @@ namespace KUT_IR_n9648500
                 collectionDocs = collection;
             }
         }
+
+		public IRCollection(IRCollection origCollection, IndexSearcher searcher, TopDocs results)
+		{
+			List<IRDocument> resultCollection = new List<IRDocument>();
+
+			int rank;
+			float score;
+			for (int i = 0; i < results.TotalHits; i++)
+			{
+				rank = i + 1;
+				score = results.ScoreDocs[i].Score;
+				Document doc = searcher.Doc(results.ScoreDocs[i].Doc);
+                string docID = doc.Get("docID");
+                IRDocument newDoc = origCollection.collectionDocs.Find(x => x.GetDocID() == docID);
+                newDoc.Rank = rank;
+                newDoc.Score = score;
+				resultCollection.Add(newDoc);
+
+				collectionDocs = resultCollection;
+			}
+		}
 
         public IRDocument Add(string docText)
         {

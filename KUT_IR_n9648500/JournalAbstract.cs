@@ -60,13 +60,13 @@ namespace KUT_IR_n9648500
             // Custom add to index method for JournalAbstract class
             Field fieldID = new Field("docID", docID, Field.Store.YES,
                                             Field.Index.NOT_ANALYZED, Field.TermVector.NO);
-            Field fieldTitle = new Field("title", title, Field.Store.YES,
+            Field fieldTitle = new Field("title", title, Field.Store.NO,
                                             Field.Index.ANALYZED, Field.TermVector.NO);
-            Field fieldAuthor = new Field("author", author, Field.Store.YES,
+            Field fieldAuthor = new Field("author", author, Field.Store.NO,
                                             Field.Index.NOT_ANALYZED, Field.TermVector.NO);
-            Field fieldBibInfo = new Field("biblioInfo", biblioInfo, Field.Store.YES,
+            Field fieldBibInfo = new Field("biblioInfo", biblioInfo, Field.Store.NO,
                                             Field.Index.NOT_ANALYZED, Field.TermVector.NO);
-            Field fieldWords = new Field("words", words, Field.Store.YES,
+            Field fieldWords = new Field("words", words, Field.Store.NO,
                                             Field.Index.ANALYZED, Field.TermVector.YES);
 
             // add boosts

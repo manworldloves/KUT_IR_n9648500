@@ -23,17 +23,12 @@ namespace KUT_IR_n9648500
         Lucene.Net.QueryParsers.QueryParser parser;
         Similarity mySimilarity;
 
-        public string originalQuery = "";
-        public string processedQuery = "";
-
+        private IRCollection myCollection;
         private TopDocs searchResults;
         private const int maxResults = 1400; // 1400 docs in provided collection
 
         public float indexTime;
         public float queryTime;
-
-        // things to get from collection that is not indexed
-        IRQueryParams queryParams;
 
         const Lucene.Net.Util.Version VERSION = Lucene.Net.Util.Version.LUCENE_30;
 
@@ -101,10 +96,7 @@ namespace KUT_IR_n9648500
 
             // build the index
             // this method call does lots of things in parallel
-            IRCollection collection = ReadAndProcessFiles(filenames);
-
-            // get the query parameters of the collection (to be used later)
-            queryParams = collection.GetQueryParams();
+            myCollection = ReadAndProcessFiles(filenames);
 
             // close the index
             CleanUpIndex();
@@ -162,7 +154,7 @@ namespace KUT_IR_n9648500
         // Method to take users query text as input
         // and does various things to it to produce
         // the actual text that is input to the searcher
-        public string PreprocessQuery(string origText)
+        public string PreprocessQuery(string origText, IRQueryParams queryParams)
         {
             //string[] origTokens = TextProcessing.TokeniseString(origText);
 
@@ -224,6 +216,7 @@ namespace KUT_IR_n9648500
             Query query;
 
 			// get the query settings from the collection
+            IRQueryParams queryParams = myCollection.GetQueryParams();
 			string[] queryFields = queryParams.Fields;
 			float[] queryFieldBoosts = queryParams.FieldBoosts;
 
@@ -298,7 +291,7 @@ namespace KUT_IR_n9648500
             // rewrite this to use IRCollection object rather than index
             CreateSearcher();
 
-            IRCollection resultDocs = new IRCollection(searcher, searchResults);
+            IRCollection resultDocs = new IRCollection(myCollection, searcher, searchResults);
 
             CleanUpSearcher();
 
