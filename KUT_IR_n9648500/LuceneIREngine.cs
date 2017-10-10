@@ -11,6 +11,8 @@ using Lucene.Net.Store; //for Directory
 using Lucene.Net.Search; // for IndexSearcher
 using Lucene.Net.QueryParsers;  // for QueryParser
 using System.Windows.Forms;
+using System.IO; // for file copy
+using System.Diagnostics; // for running trec_eval
 
 namespace KUT_IR_n9648500
 {
@@ -199,6 +201,28 @@ namespace KUT_IR_n9648500
             return preprocString;
         }
 
+        // helper function for RunQuery
+        public string GetQuotesAndBoost(string text, float boost)
+        {
+            List<string> quotes = new List<string>();
+
+			int x1;
+			int nextPos = 0;
+			x1 = text.IndexOf('\"', 0);
+			while (x1 != -1)
+			{
+				if (x1 >= 0)
+				{
+					nextPos = text.IndexOf('\"', x1 + 1);
+					quotes.Add(text.Substring(x1, nextPos - x1 + 1) + "^" + boost);
+				}
+				nextPos++;
+				x1 = text.IndexOf('\"', nextPos);
+			}
+
+            return string.Join(" ", quotes);
+        }
+
         /// Executes the query.
         //  Preprocesses the query text entered by the user
         //  and queries the index.
@@ -208,8 +232,6 @@ namespace KUT_IR_n9648500
         {
             // start timer...
             DateTime start = DateTime.Now;
-
-            //originalQuery = text;
 
             CreateSearcher();
 
@@ -236,7 +258,9 @@ namespace KUT_IR_n9648500
 				string partA = string.Join(" ", tokens);
 
                 // add "" phrases and boost
-
+                float quoteBoost = 5.0f;
+                string quotes = GetQuotesAndBoost(text, quoteBoost);
+                text = text + " " + quotes;
 
 				// build ngrams
 				int ngram_num = 3;
@@ -261,6 +285,11 @@ namespace KUT_IR_n9648500
             }
             else
             {
+				// add "" phrases and boost
+				float quoteBoost = 5.0f;
+				string quotes = GetQuotesAndBoost(text, quoteBoost);
+				text = text + " " + quotes;
+
 				// no preprocessing
                 parser = new MultiFieldQueryParser(Lucene.Net.Util.Version.LUCENE_30,
 				                                    queryFields, analyzer, boosts);
@@ -391,6 +420,25 @@ namespace KUT_IR_n9648500
 
                 appendFlag = true;
             }
+
+            string trecpath = "../../../../results/";
+            if (File.Exists(trecpath + Path.GetFileName(filename)))
+            {
+                File.Delete(trecpath + Path.GetFileName(filename));
+            }
+
+            File.Move(filename, trecpath + Path.GetFileName(filename));
+
+            // from MSDN
+            Process p = new Process();
+            p.StartInfo.UseShellExecute = false;
+            p.StartInfo.RedirectStandardOutput = true;
+            p.StartInfo.FileName = trecpath + "trec_eval";
+            p.StartInfo.Arguments = "-q " +trecpath + "cranqrel.txt " + trecpath + "autoquery_results.txt";
+            p.Start();
+            string output = p.StandardOutput.ReadToEnd();
+            p.WaitForExit();
+            Console.WriteLine(output);
         }
     }
 }
