@@ -14,7 +14,7 @@ namespace KUT_IR_n9648500
     public partial class frmQuery : Form
     {
         LuceneIREngine myIREngine = new LuceneIREngine();
-        string queryText;
+        //string queryText;
         string topicID = "000";
 
         public frmQuery()
@@ -29,6 +29,9 @@ namespace KUT_IR_n9648500
             myIREngine = IREngine;
             chkProcess.Checked = true;
             tbProcQuery.Text = "";
+
+            // this button was used for testing purposes
+            btnAutoQuery.Visible = true;
 
         }
 
@@ -74,28 +77,43 @@ namespace KUT_IR_n9648500
             openFileDialog.ShowDialog();
             string selectedFile = openFileDialog.FileName;
 
-            // turn the file into a dictionary
-            Dictionary<string, string> infoNeeds = InfoNeeds.GetInfoNeeds(selectedFile);
-
-            // open form for user to select query
-            frmQuerySelect getQuery = new frmQuerySelect(infoNeeds);
-            getQuery.ShowDialog();
-            
-            // wait for user to select a query
-
-            // set the query text if the use has selected a query
-            topicID = getQuery.SelectedTopicID;
-            if (topicID != "000")
+            if (selectedFile != "")
             {
-                string stdQueryText = infoNeeds[topicID];
-                txtQuery.Text = stdQueryText;
-            }
+				// turn the file into a dictionary
+				Dictionary<string, string> infoNeeds = InfoNeeds.GetInfoNeeds(selectedFile);
 
+				// open form for user to select query
+				frmQuerySelect getQuery = new frmQuerySelect(infoNeeds);
+				getQuery.ShowDialog();
+
+				// wait for user to select a query
+
+				// set the query text if the use has selected a query
+				topicID = getQuery.SelectedTopicID;
+				if (topicID != "000")
+				{
+					string stdQueryText = infoNeeds[topicID];
+					txtQuery.Text = stdQueryText;
+				}
+            }
+            else
+            {
+                MessageBox.Show("No query file selected!");
+            }
         }
 
         private void btnAutoQuery_Click(object sender, EventArgs e)
         {
             // do stuff
+            // this is for testing only
+            string queryFile = "../../cran_information_needs.txt";
+            //string now = DateTime.Now.ToString("yyyymmddhhmmss");
+            string resultsFile = "../../autoquery_results.txt";
+
+            Dictionary<string, string> infoNeeds = InfoNeeds.GetInfoNeeds(queryFile);
+
+            myIREngine.AutoResults(resultsFile, infoNeeds, chkProcess.Checked);
+
         }
     }
 }

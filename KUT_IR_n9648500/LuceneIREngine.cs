@@ -221,62 +221,64 @@ namespace KUT_IR_n9648500
 
             CreateSearcher();
 
-            /*
+            Query query;
+
+			// get the query settings from the collection
+			string[] queryFields = queryParams.Fields;
+			float[] queryFieldBoosts = queryParams.FieldBoosts;
+
+			// build field boost dictionary
+			IDictionary<string, float> boosts = new Dictionary<string, float>();
+			for (int i = 0; i < queryFields.Length; i++)
+			{
+				boosts.Add(queryFields[i], queryFieldBoosts[i]);
+			}
+
             // preprocess query
             if (preproc == true)
             {
-                text = PreprocessQuery(text);
-                processedQuery = text;
-            }*/
+				// preprocessing text
+				List<string> tokens = TextProcessing.TokeniseString(text);
+				//tokens = TextProcessing.RemoveStopWords(tokens);
+				string partA = string.Join(" ", tokens);
 
-            // preprocessing text
-            List<string> tokens = TextProcessing.TokeniseString(text);
-            //tokens = TextProcessing.RemoveStopWords(tokens);
-            string partA = string.Join(" ", tokens);
+                // add "" phrases and boost
 
-            // build ngrams
-            int ngram_num = 3;
-            List<string> ngrams = TextProcessing.getNGrams(tokens, ngram_num);
-            string partB = string.Join(" ", ngrams);
 
-            /// other options...
-            // DefaultOperator - AND / OR
-            // BooleanQuery - combine queries in different ways
-            BooleanQuery bQuery = new BooleanQuery();
+				// build ngrams
+				int ngram_num = 3;
+				List<string> ngrams = TextProcessing.getNGrams(tokens, ngram_num);
+				string partB = string.Join(" ", ngrams);
 
-            // get the query settings from the collection
-            string[] queryFields = queryParams.Fields;
-            float[] queryFieldBoosts = queryParams.FieldBoosts;
+				// Build BooleanQuery
+				BooleanQuery bQuery = new BooleanQuery();
+                QueryParser parserA = new MultiFieldQueryParser(Lucene.Net.Util.Version.LUCENE_30,
+												   queryFields, analyzer, boosts);
+                QueryParser parserB = new MultiFieldQueryParser(Lucene.Net.Util.Version.LUCENE_30,
+												   queryFields, analyzer, boosts);
+                
+				Query queryA = parserA.Parse(partA);
+				Query queryB = parserB.Parse(partB);
 
-            // build field boost dictionary
-            IDictionary<string, float> boosts = new Dictionary<string, float>();
-            for (int i = 0; i < queryFields.Length; i++)
-            {
-                boosts.Add(queryFields[i], queryFieldBoosts[i]);
+				bQuery.Add(queryA, Occur.MUST);
+				bQuery.Add(queryB, Occur.MUST);
+
+                query = bQuery;
+
             }
+            else
+            {
+				// no preprocessing
+                parser = new MultiFieldQueryParser(Lucene.Net.Util.Version.LUCENE_30,
+				                                    queryFields, analyzer, boosts);
+                query = parser.Parse(text);
+			}
 
-            //parser = new MultiFieldQueryParser(Lucene.Net.Util.Version.LUCENE_30,
-            //                                   queryFields, analyzer, boosts);
+            // print query text to form
+            qText = query.ToString();
 
-			QueryParser parserA = new MultiFieldQueryParser(Lucene.Net.Util.Version.LUCENE_30,
-											   queryFields, analyzer, boosts);
-
-			QueryParser parserB = new MultiFieldQueryParser(Lucene.Net.Util.Version.LUCENE_30,
-											   queryFields, analyzer, boosts);
-
-
-            Query queryA = parserA.Parse(partA);
-            Query queryB = parserB.Parse(partB);
-
-            bQuery.Add(queryA, Occur.MUST);
-            bQuery.Add(queryB, Occur.MUST);
-            //searchResults = SearchText(text);
-
-            //Query query = parser.Parse(querytext);
-
-            qText = bQuery.ToString();
-
-			searchResults = searcher.Search(bQuery, maxResults);
+            // execute the search
+			searchResults = searcher.Search(query, maxResults);
 
             // end timer and calculate total time
             DateTime end = DateTime.Now;
@@ -293,6 +295,7 @@ namespace KUT_IR_n9648500
         //  This is used to display the search results.
         public IRCollection BuildResults()
         {
+            // rewrite this to use IRCollection object rather than index
             CreateSearcher();
 
             IRCollection resultDocs = new IRCollection(searcher, searchResults);
@@ -354,6 +357,47 @@ namespace KUT_IR_n9648500
             FileHandling.WriteTextFile(evalList, fileName, appendFlag);
 
             return 0;
+        }
+
+		// this is for testing only
+		public void AutoResults (string filename, Dictionary<string, string> queries, bool preproc)
+        {
+			string dontcare = "";
+
+			bool appendFlag = false;
+            foreach (KeyValuePair<string,string> q in queries)
+            {
+                // execute query
+                string topicID = q.Key;
+                RunQuery(q.Value, preproc, out dontcare);
+
+                // get results
+                IRCollection results = BuildResults();
+
+				// write to file
+				string groupName = "09648500_NathanOnly";
+
+                List<string> evalList = new List<string>();
+
+				// structure TopicID QO DocID rank score group
+				string tempString = "";
+				for (int i = 0; i < results.Length(); i++)
+				{
+					IRDocument doc = results.GetIRDocument(i);
+					tempString = topicID + "\tQ0\t";
+					tempString += doc.GetDocID() + "\t";
+					tempString += doc.Rank + "\t";
+					tempString += doc.Score + "\t";
+					tempString += groupName + "\n";
+
+					evalList.Add(tempString);
+				}
+
+				// write file
+				FileHandling.WriteTextFile(evalList, filename, appendFlag);
+
+                appendFlag = true;
+            }
         }
     }
 }
