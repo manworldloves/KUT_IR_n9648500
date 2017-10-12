@@ -43,6 +43,7 @@ namespace KUT_IR_n9648500
             analyzer = new SnowballAnalyzer(VERSION, "English", stopWords);
             //analyzer = new Lucene.Net.Analysis.Standard.StandardAnalyzer(VERSION);
             mySimilarity = new CustomSimilarity();
+
         }
 
         #region Index
