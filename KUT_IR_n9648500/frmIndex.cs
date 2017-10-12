@@ -54,9 +54,9 @@ namespace KUT_IR_n9648500
 
         private void btnCreateIndex_Click(object sender, EventArgs e)
         {
-            int success = myIREngine.CreateIndex(collectionFolder, indexFolder);
+            int numberDocs = myIREngine.CreateIndex(collectionFolder, indexFolder);
 
-            if (success == 0)
+            if (numberDocs > 0)
             {
                 // save collection and index locations to user settings
                 Properties.Settings.Default.collectionDir = collectionFolder;
@@ -64,7 +64,7 @@ namespace KUT_IR_n9648500
                 Properties.Settings.Default.Save();
 
                 float indexTime = myIREngine.indexTime;
-                MessageBox.Show("Index created successfully!\nTime to index: "
+                MessageBox.Show(numberDocs + " documents added to index!\nTime to index: "
                                 + indexTime + " seconds");
 
                 // open query dialog

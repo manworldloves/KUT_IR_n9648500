@@ -109,7 +109,7 @@ namespace KUT_IR_n9648500
             TimeSpan duration = end - start;
             indexTime = duration.Seconds + (float)duration.Milliseconds / 1000;
 
-            return 0;
+            return myCollection.Length();
         }
         #endregion
 
@@ -261,7 +261,7 @@ namespace KUT_IR_n9648500
                 // add "" phrases and boost
                 float quoteBoost = 5.0f;
                 string quotes = GetQuotesAndBoost(text, quoteBoost);
-                text = text + " " + quotes;
+                //text = text + " " + quotes;
 
 				// build ngrams
 				int ngram_num = 3;
@@ -277,6 +277,12 @@ namespace KUT_IR_n9648500
                 
 				Query queryA = parserA.Parse(partA);
 				Query queryB = parserB.Parse(partB);
+
+                if (quotes != "")
+                {
+                    Query queryC = parserA.Parse(quotes);
+                    bQuery.Add(queryC, Occur.SHOULD);
+                }
 
 				bQuery.Add(queryA, Occur.MUST);
 				bQuery.Add(queryB, Occur.MUST);
