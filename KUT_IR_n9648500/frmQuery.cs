@@ -14,8 +14,10 @@ namespace KUT_IR_n9648500
     public partial class frmQuery : Form
     {
         LuceneIREngine myIREngine = new LuceneIREngine();
-        //string queryText;
-        string topicID = "000";
+        private string topicID = "000";
+
+        // the program doesn't like having 1400 autosuggestions so I have to do it manually...
+        string[] allSugs;
 
         public frmQuery()
         {
@@ -29,10 +31,14 @@ namespace KUT_IR_n9648500
             myIREngine = IREngine;
             chkProcess.Checked = true;
             tbProcQuery.Text = "";
+            this.ActiveControl = txtQuery;
 
+            // build query autocomplete options
+            allSugs = myIREngine.GetQuerySuggestions();
+            lbSuggestions.Visible = false;
+            
             // this button was used for testing purposes
             btnAutoQuery.Visible = true;
-
         }
 
         private void chkProcess_CheckedChanged(object sender, EventArgs e)
@@ -114,6 +120,49 @@ namespace KUT_IR_n9648500
 
             myIREngine.AutoResults(resultsFile, infoNeeds, chkProcess.Checked);
 
+        }
+
+        private void btnClose_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void txtQuery_TextChanged(object sender, EventArgs e)
+        {
+            // reset the suggestions
+            lbSuggestions.Items.Clear();
+            
+            // if something has been typed, update the suggestions and display
+            if (txtQuery.Text != "")
+            {
+                // not null, matches the start of lowercase text, is distinct
+                string[] qSugs = allSugs.Where(x => x != null && x.StartsWith(txtQuery.Text.ToLower())).Distinct().ToArray();
+                if (qSugs.Length > 0)
+                {
+                    lbSuggestions.Items.AddRange(qSugs);
+                    lbSuggestions.Visible = true;
+                }
+                else
+                {
+                    lbSuggestions.Visible = false;
+                }
+
+
+            }
+            else
+            {
+                // else, hide the suggestions
+                lbSuggestions.Visible = false;
+            }
+
+        }
+
+        private void lbSuggestions_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // if the user selects a suggestions,
+            // set it as the query text and hide suggestions
+            txtQuery.Text = lbSuggestions.Text;
+            lbSuggestions.Visible = false;
         }
     }
 }

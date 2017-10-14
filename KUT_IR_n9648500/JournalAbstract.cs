@@ -87,6 +87,11 @@ namespace KUT_IR_n9648500
             writer.AddDocument(doc);
         }
 
+        public override string GetQuerySuggestion()
+        {
+            return title;
+        }
+
         public override IRQueryParams GetQueryParams()
         {
             string[] fields = new string[] { "title", "words" };

@@ -39,6 +39,8 @@
             this.lblTotalResults = new System.Windows.Forms.Label();
             this.lblQueryTime = new System.Windows.Forms.Label();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
+            this.label1 = new System.Windows.Forms.Label();
+            this.btnClose = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgSearchResults)).BeginInit();
             this.SuspendLayout();
             // 
@@ -72,7 +74,7 @@
             // 
             // btnSaveResults
             // 
-            this.btnSaveResults.Location = new System.Drawing.Point(877, 495);
+            this.btnSaveResults.Location = new System.Drawing.Point(733, 495);
             this.btnSaveResults.Name = "btnSaveResults";
             this.btnSaveResults.Size = new System.Drawing.Size(95, 54);
             this.btnSaveResults.TabIndex = 1;
@@ -92,18 +94,17 @@
             // 
             // lblResultRange
             // 
-            this.lblResultRange.AutoSize = true;
             this.lblResultRange.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblResultRange.Location = new System.Drawing.Point(434, 507);
+            this.lblResultRange.Location = new System.Drawing.Point(402, 524);
             this.lblResultRange.Name = "lblResultRange";
-            this.lblResultRange.Size = new System.Drawing.Size(276, 25);
+            this.lblResultRange.Size = new System.Drawing.Size(173, 25);
             this.lblResultRange.TabIndex = 4;
-            this.lblResultRange.Text = "Displaying Results 1 - 10";
+            this.lblResultRange.Text = " 1 - 10";
             this.lblResultRange.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // btnNext
             // 
-            this.btnNext.Location = new System.Drawing.Point(757, 495);
+            this.btnNext.Location = new System.Drawing.Point(581, 495);
             this.btnNext.Name = "btnNext";
             this.btnNext.Size = new System.Drawing.Size(67, 54);
             this.btnNext.TabIndex = 5;
@@ -124,7 +125,7 @@
             // lblTotalResults
             // 
             this.lblTotalResults.AutoSize = true;
-            this.lblTotalResults.Location = new System.Drawing.Point(128, 495);
+            this.lblTotalResults.Location = new System.Drawing.Point(126, 504);
             this.lblTotalResults.Name = "lblTotalResults";
             this.lblTotalResults.Size = new System.Drawing.Size(69, 13);
             this.lblTotalResults.TabIndex = 7;
@@ -133,17 +134,39 @@
             // lblQueryTime
             // 
             this.lblQueryTime.AutoSize = true;
-            this.lblQueryTime.Location = new System.Drawing.Point(128, 519);
+            this.lblQueryTime.Location = new System.Drawing.Point(126, 528);
             this.lblQueryTime.Name = "lblQueryTime";
             this.lblQueryTime.Size = new System.Drawing.Size(74, 13);
             this.lblQueryTime.TabIndex = 8;
             this.lblQueryTime.Text = "Time to query:";
+            // 
+            // label1
+            // 
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(403, 496);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(173, 25);
+            this.label1.TabIndex = 9;
+            this.label1.Text = "Displaying results";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // btnClose
+            // 
+            this.btnClose.Location = new System.Drawing.Point(888, 495);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(84, 51);
+            this.btnClose.TabIndex = 10;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
             // frmResults
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(984, 561);
+            this.Controls.Add(this.btnClose);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.lblQueryTime);
             this.Controls.Add(this.lblTotalResults);
             this.Controls.Add(this.btnOpenDetails);
@@ -172,5 +195,7 @@
         private System.Windows.Forms.Label lblTotalResults;
         private System.Windows.Forms.Label lblQueryTime;
         private System.Windows.Forms.SaveFileDialog saveFileDialog;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button btnClose;
     }
 }

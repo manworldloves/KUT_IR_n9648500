@@ -115,11 +115,11 @@
             // 
             // btnOK
             // 
-            this.btnOK.Location = new System.Drawing.Point(266, 499);
+            this.btnOK.Location = new System.Drawing.Point(266, 519);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(152, 49);
             this.btnOK.TabIndex = 2;
-            this.btnOK.Text = "OK";
+            this.btnOK.Text = "Close";
             this.btnOK.UseVisualStyleBackColor = true;
             this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
             // 
@@ -149,7 +149,7 @@
             this.Controls.Add(this.lblAuthorText);
             this.Controls.Add(this.lblTitleText);
             this.Name = "frmDetail";
-            this.Text = "frmDetail";
+            this.Text = "Journal Abstract Detail";
             this.ResumeLayout(false);
             this.PerformLayout();
 

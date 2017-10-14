@@ -35,6 +35,7 @@ namespace KUT_IR_n9648500
         public float queryTime;
 
         const Lucene.Net.Util.Version VERSION = Lucene.Net.Util.Version.LUCENE_30;
+        
 
         /// class constructor
         public LuceneIREngine()
@@ -135,6 +136,12 @@ namespace KUT_IR_n9648500
         #endregion
 
         #region Query
+        // builds a list of query suggestions
+        public string[] GetQuerySuggestions()
+        {
+            return myCollection.GetQuerySuggestions();
+        }
+
         /// helper function for RunQuery()
         // create the searcher object
         private void CreateSearcher()

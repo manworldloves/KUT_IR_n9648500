@@ -88,8 +88,7 @@ namespace KUT_IR_n9648500
             }
 
             // update text
-            lblResultRange.Text = "Displaying Results " + 
-                (resultStart + 1) + " - " + resultEnd;
+            lblResultRange.Text = (resultStart + 1) + " - " + resultEnd;
         }
 
         private void DisplayDetailedResults()
@@ -108,7 +107,11 @@ namespace KUT_IR_n9648500
             saveFileDialog.Filter = "Text files (*.txt)|*.txt";
             saveFileDialog.ShowDialog();
             string fileName = saveFileDialog.FileName;
-            myIREngine.WriteEvalFile(fileName, topicID, myResultCollection);
+
+            if (fileName != "")
+            {
+                myIREngine.WriteEvalFile(fileName, topicID, myResultCollection);
+            }
         }
 
         private void btnClearResults_Click(object sender, EventArgs e)
@@ -161,6 +164,11 @@ namespace KUT_IR_n9648500
         private void btnOpenDetails_Click(object sender, EventArgs e)
         {
             DisplayDetailedResults();
+        }
+
+        private void btnClose_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }

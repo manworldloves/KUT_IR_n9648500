@@ -23,8 +23,6 @@ namespace KUT_IR_n9648500
             InitializeComponent();
             btnCreateIndex.Enabled = false;
 
-            // YOU NEED TO REMOVE THIS - JUST TO SPEED UP TESTING //
-            // https://www.dotnetperls.com/settings
             collectionFolder = Properties.Settings.Default.collectionDir;
             indexFolder = Properties.Settings.Default.indexDir;
             if (collectionFolder != "")
@@ -77,6 +75,11 @@ namespace KUT_IR_n9648500
                                + "Try again.");
             }
 
+        }
+
+        private void btnClose_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
 
         private void checkEnableCreateIndex()

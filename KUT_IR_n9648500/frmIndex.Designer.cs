@@ -38,6 +38,8 @@
             this.btnCreateIndex = new System.Windows.Forms.Button();
             this.collectionFolderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.indexFolderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
+            this.lblTitle = new System.Windows.Forms.Label();
+            this.btnClose = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // lblStep1
@@ -124,11 +126,35 @@
             // 
             this.indexFolderBrowserDialog.RootFolder = System.Environment.SpecialFolder.MyComputer;
             // 
+            // lblTitle
+            // 
+            this.lblTitle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTitle.Location = new System.Drawing.Point(15, 18);
+            this.lblTitle.Name = "lblTitle";
+            this.lblTitle.Size = new System.Drawing.Size(562, 24);
+            this.lblTitle.TabIndex = 3;
+            this.lblTitle.Text = "KUT Journal Abstract Finder";
+            this.lblTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // btnClose
+            // 
+            this.btnClose.Location = new System.Drawing.Point(492, 261);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(84, 51);
+            this.btnClose.TabIndex = 5;
+            this.btnClose.Text = "Exit";
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            // 
             // frmIndex
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(682, 325);
+            this.ClientSize = new System.Drawing.Size(589, 325);
+            this.Controls.Add(this.btnClose);
+            this.Controls.Add(this.lblTitle);
             this.Controls.Add(this.lblIndex);
             this.Controls.Add(this.lblCollection);
             this.Controls.Add(this.btnCreateIndex);
@@ -156,6 +182,8 @@
         private System.Windows.Forms.Button btnCreateIndex;
         private System.Windows.Forms.FolderBrowserDialog collectionFolderBrowserDialog;
         private System.Windows.Forms.FolderBrowserDialog indexFolderBrowserDialog;
+        private System.Windows.Forms.Label lblTitle;
+        private System.Windows.Forms.Button btnClose;
     }
 }
 
