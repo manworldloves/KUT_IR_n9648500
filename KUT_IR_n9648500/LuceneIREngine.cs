@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent; // for threading collection
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,6 +14,7 @@ using Lucene.Net.QueryParsers;  // for QueryParser
 using System.Windows.Forms;
 using System.IO; // for file copy
 using System.Diagnostics; // for running trec_eval
+
 
 namespace KUT_IR_n9648500
 {
@@ -74,12 +76,13 @@ namespace KUT_IR_n9648500
             IRCollection collection = new IRCollection();
 
             // Lists are not thread safe so...
-            // 1. need to create an array for the docs
-            // 2. convert the array to a list
-            // 3. add the list to the collection
-            int docIndex;
+            // 1. need to create a ConcurrentBag<IRDocument>
+            // 2. add docs to this collection
+            // 3. then after all docs are added, convert the array to a list
             int numDocs = fileNames.Count;
             IRDocument[] docArray = new IRDocument[numDocs];
+
+            var conDocs = new ConcurrentBag<IRDocument>();
 
             Parallel.ForEach(fileNames, fn =>
             {
@@ -87,8 +90,7 @@ namespace KUT_IR_n9648500
                 IRDocument doc = collection.GetNewDoc(docText);
                 if (doc != null)
                 {
-                    docIndex = int.Parse(doc.GetDocID()) - 1;
-                    docArray[docIndex] = doc;
+                    conDocs.Add(doc);
                     doc.AddToIndex(writer);
                 }
                 else
@@ -97,31 +99,9 @@ namespace KUT_IR_n9648500
                 }
             });
 
-            /*
-            foreach(string fn in fileNames)
-            {
-                string docText = FileHandling.ReadTextFile(fn);
-                IRDocument doc = collection.GetNewDoc(docText);
-                if (doc != null)
-                {
-                    docIndex = int.Parse(doc.GetDocID()) - 1;
-                    docArray[docIndex] = doc;
-                    doc.AddToIndex(writer);
-                }
-                else
-                {
-                    Console.WriteLine("Error with file: " + fn);
-                }
-            }*/
-
-            List<IRDocument> docList = docArray.ToList();
-
-            // remove possible nulls if there is a dodgy input file
-            docList.RemoveAll(item => item == null);
-
             // add documents to collection object and set maxResults
-            collection.AddDocs(docList);
-            maxResults = docList.Count;
+            collection.AddDocs(conDocs.ToList());
+            maxResults = conDocs.Count;
 
             return collection;
         }
