@@ -84,13 +84,13 @@ namespace KUT_IR_n9648500
 
 				// open form for user to select query
 				frmQuerySelect getQuery = new frmQuerySelect(infoNeeds);
-				getQuery.ShowDialog();
-
-				// wait for user to select a query
+				
+                // wait for user to select a query
+                getQuery.ShowDialog();
 
 				// set the query text if the use has selected a query
 				topicID = getQuery.SelectedTopicID;
-				if (topicID != "000")
+				if (topicID != null)
 				{
 					string stdQueryText = infoNeeds[topicID];
 					txtQuery.Text = stdQueryText;

@@ -69,23 +69,6 @@ namespace KUT_IR_n9648500
             collectionDocs = new List<IRDocument>();
         }
 
-        public IRCollection(IndexSearcher searcher, TopDocs results)
-        {
-            List<IRDocument> collection = new List<IRDocument>();
-
-            int rank;
-            float score;
-            for (int i = 0; i < results.TotalHits; i++)
-            {
-                rank = i + 1;
-                score = results.ScoreDocs[i].Score;
-                Document doc = searcher.Doc(results.ScoreDocs[i].Doc);
-                collection.Add(new JournalAbstract(doc, rank, score));
-
-                collectionDocs = collection;
-            }
-        }
-
 		public IRCollection(IRCollection origCollection, IndexSearcher searcher, TopDocs results)
 		{
 			List<IRDocument> resultCollection = new List<IRDocument>();
@@ -107,11 +90,19 @@ namespace KUT_IR_n9648500
 			}
 		}
 
-        public IRDocument Add(string docText)
+        public void AddDoc(IRDocument doc)
         {
-            IRDocument doc = new JournalAbstract(docText);
-
             collectionDocs.Add(doc);
+        }
+
+        public void AddDocs(List<IRDocument> docs)
+        {
+            collectionDocs.AddRange(docs);
+        }
+
+        public IRDocument GetNewDoc(string docText)
+        {
+            IRDocument doc = JournalAbstract.JAParse(docText);
 
             return doc;
         }

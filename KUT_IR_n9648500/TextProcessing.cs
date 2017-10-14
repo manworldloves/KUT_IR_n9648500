@@ -12,30 +12,6 @@ namespace KUT_IR_n9648500
 
         }
 
-        public static string Unix2Dos(string inString)
-        {
-            List<char> chars = inString.ToList();
-
-            const char LF = '\n';
-            const char CR = '\r';
-
-            if (chars.Count > 0)
-            {
-                if (chars[0] == LF)
-                    chars.Insert(0, CR);
-
-                for (int i = chars.Count - 1; i > 0; i--)
-                {
-                    if ((chars[i] == LF) && !(chars[i - 1] == CR))
-                    {
-                        chars.Insert(i, CR);
-                    }
-                }
-            }
- 
-            return string.Join("", chars);
-        }
-
         // split the string into tokens
         public static List<string> TokeniseString(string text)
 		{

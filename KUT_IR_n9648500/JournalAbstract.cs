@@ -22,18 +22,8 @@ namespace KUT_IR_n9648500
 		public string BiblioInfo { get { return biblioInfo; } }
 		public string Words { get { return words; } }
 
-        public JournalAbstract(string document)
+        public JournalAbstract(string[] docParts)
         {
-            string[] delims = { ".I", ".T", ".A", ".B", ".W" };
-
-            string[] docParts = document.Split(delims, StringSplitOptions.RemoveEmptyEntries);
-
-            // strip end of line chars from the fields
-            for (int i = 0; i < 4; i++)
-            {
-                docParts[i] = docParts[i].Trim();
-            }
-
             docID = docParts[0];
             title = docParts[1];
             author = docParts[2];
@@ -44,15 +34,21 @@ namespace KUT_IR_n9648500
             words = docParts[4].Trim();
         }
 
-        public JournalAbstract(Document doc, int rank, float score)
+        public static JournalAbstract JAParse(string docText)
         {
-            docID = doc.Get("docID");
-            title = doc.Get("title");
-            author = doc.Get("author");
-            biblioInfo = doc.Get("biblioInfo");
-            words = doc.Get("words");
-            this.rank = rank;
-            this.score = score;
+            string[] delims = { ".I", ".T", ".A", ".B", ".W" };
+
+            string[] docParts = docText.Split(delims, StringSplitOptions.RemoveEmptyEntries);
+
+            // strip end of line chars from the fields
+            for (int i = 0; i < 4; i++)
+            {
+                docParts[i] = docParts[i].Trim();
+            }
+
+            // check that the doc was structure correctly and has a docID that is an int
+
+            return new JournalAbstract(docParts);
         }
 
         public override void AddToIndex(Lucene.Net.Index.IndexWriter writer)

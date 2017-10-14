@@ -27,7 +27,7 @@ namespace KUT_IR_n9648500
 
         private IRCollection myCollection;
         private TopDocs searchResults;
-        private const int maxResults = 1400; // 1400 docs in provided collection
+        private int maxResults = 0; // this is set when the collection is built
 
         public float indexTime;
         public float queryTime;
@@ -41,9 +41,7 @@ namespace KUT_IR_n9648500
             writer = null;
             ISet<string> stopWords = StopAnalyzer.ENGLISH_STOP_WORDS_SET;
             analyzer = new SnowballAnalyzer(VERSION, "English", stopWords);
-            //analyzer = new Lucene.Net.Analysis.Standard.StandardAnalyzer(VERSION);
             mySimilarity = new CustomSimilarity();
-
         }
 
         #region Index
@@ -75,12 +73,27 @@ namespace KUT_IR_n9648500
         {
             IRCollection collection = new IRCollection();
 
+            // Lists are not thread safe so...
+            // 1. need to create an array for the docs
+            // 2. convert the array to a list
+            // 3. add the list to the collection
+            int docIndex;
+            int numDocs = fileNames.Count;
+            IRDocument[] docArray = new IRDocument[numDocs];
+
             Parallel.ForEach(fileNames, fn =>
             {
                 string docText = FileHandling.ReadTextFile(fn);
-                IRDocument doc = collection.Add(docText);
+                IRDocument doc = collection.GetNewDoc(docText);
+                docIndex = int.Parse(doc.GetDocID())-1;
+                docArray[docIndex] = doc;
                 doc.AddToIndex(writer);
             });
+
+            List<IRDocument> docList = docArray.ToList();
+
+            collection.AddDocs(docList);
+            maxResults = docList.Count;
 
             return collection;
         }
@@ -123,20 +136,6 @@ namespace KUT_IR_n9648500
         }
 
         /// helper function for RunQuery()
-        // execute the query
-        private TopDocs SearchText(string querytext)
-        {
-
-            //System.Console.WriteLine("Searching for " + querytext);
-            querytext = querytext.ToLower();
-            Query query = parser.Parse(querytext);
-
-            TopDocs results = searcher.Search(query, maxResults);
-
-            return results;
-        }
-
-        /// helper function for RunQuery()
         // closes the index after searching
         private void CleanUpSearcher()
         {
@@ -157,71 +156,29 @@ namespace KUT_IR_n9648500
         // Method to take users query text as input
         // and does various things to it to produce
         // the actual text that is input to the searcher
-        public string PreprocessQuery(string origText, IRQueryParams queryParams)
+        public Query PreprocessQuery(string origText, QueryParser parser)
         {
-            //string[] origTokens = TextProcessing.TokeniseString(origText);
+            // builds a boolean query
+            // partA is just the original query text
+            string partA = origText;
 
-            List<string> origTokens = TextProcessing.TokeniseString(origText).ToList();
+            // partB is bi- and tri-grams built from the original text
+            // build ngrams
+            int ngram_num = 3;
+            List<string> tokens = TextProcessing.TokeniseString(origText);
+            List<string> ngrams = TextProcessing.getNGrams(tokens, ngram_num);
+            string partB = string.Join(" ", ngrams);
 
-            // Query pre processing steps.
-            // 1. remove stop words if required
-            if (queryParams.RemoveStopWords)
-            {
-                origTokens = TextProcessing.RemoveStopWords(origTokens);
-            }
+            // Build BooleanQuery
+            BooleanQuery bQuery = new BooleanQuery();
 
-            List<string> preprocTokens = origTokens;
+            Query queryA = parser.Parse(partA);
+            Query queryB = parser.Parse(partB);
 
-            // 2. get ngrams if required
-            int n = queryParams.NGrams;
-            if (n > 1)
-            {
-                List<string> nGrams = TextProcessing.getNGrams(preprocTokens, n);
-                float nGramBoost = queryParams.NGramBoost;
-                List<string> nGramsWithBoost = AddBoostToStringArray(nGrams, nGramBoost);
-                preprocTokens.AddRange(nGramsWithBoost);
-            }
+            bQuery.Add(queryA, Occur.MUST);
+            bQuery.Add(queryB, Occur.MUST);
 
-            // 3. get synonums if required
-            if (queryParams.AddSynonyms == true)
-            {
-                List<string> synonyms = TextProcessing.getSynonyms(origTokens);
-                float synBoost = queryParams.SynonymBoost;
-                List<string> synWithBoost = AddBoostToStringArray(synonyms, synBoost);
-                preprocTokens.AddRange(synWithBoost);
-            }
-
-            // 4. turn the list back to a string
-            string preprocString = "";
-            foreach (string token in preprocTokens)
-            {
-                preprocString += token + " ";
-            }
-            preprocString.Trim();
-
-            return preprocString;
-        }
-
-        // helper function for RunQuery
-        public string GetQuotesAndBoost(string text, float boost)
-        {
-            List<string> quotes = new List<string>();
-
-			int x1;
-			int nextPos = 0;
-			x1 = text.IndexOf('\"', 0);
-			while (x1 != -1)
-			{
-				if (x1 >= 0)
-				{
-					nextPos = text.IndexOf('\"', x1 + 1);
-					quotes.Add(text.Substring(x1, nextPos - x1 + 1) + "^" + boost);
-				}
-				nextPos++;
-				x1 = text.IndexOf('\"', nextPos);
-			}
-
-            return string.Join(" ", quotes);
+            return bQuery;
         }
 
         /// Executes the query.
@@ -234,72 +191,32 @@ namespace KUT_IR_n9648500
             // start timer...
             DateTime start = DateTime.Now;
 
-            CreateSearcher();
-
-            Query query;
-
-			// get the query settings from the collection
+            // get the query settings from the collection
             IRQueryParams queryParams = myCollection.GetQueryParams();
-			string[] queryFields = queryParams.Fields;
-			float[] queryFieldBoosts = queryParams.FieldBoosts;
+            string[] queryFields = queryParams.Fields;
+            float[] queryFieldBoosts = queryParams.FieldBoosts;
 
-			// build field boost dictionary
-			IDictionary<string, float> boosts = new Dictionary<string, float>();
-			for (int i = 0; i < queryFields.Length; i++)
-			{
-				boosts.Add(queryFields[i], queryFieldBoosts[i]);
-			}
+            // build field boost dictionary
+            IDictionary<string, float> boosts = new Dictionary<string, float>();
+            for (int i = 0; i < queryFields.Length; i++)
+            {
+                boosts.Add(queryFields[i], queryFieldBoosts[i]);
+            }
 
-            // preprocess query
+            // setup query and searcher
+            CreateSearcher();
+            Query query;
+            parser = new MultiFieldQueryParser(Lucene.Net.Util.Version.LUCENE_30,
+                                    queryFields, analyzer, boosts);
+            
+            // preprocess query (if required)
             if (preproc == true)
             {
-				// preprocessing text
-				List<string> tokens = TextProcessing.TokeniseString(text);
-				//tokens = TextProcessing.RemoveStopWords(tokens);
-				string partA = string.Join(" ", tokens);
-
-                // add "" phrases and boost
-                float quoteBoost = 5.0f;
-                string quotes = GetQuotesAndBoost(text, quoteBoost);
-                //text = text + " " + quotes;
-
-				// build ngrams
-				int ngram_num = 3;
-				List<string> ngrams = TextProcessing.getNGrams(tokens, ngram_num);
-				string partB = string.Join(" ", ngrams);
-
-				// Build BooleanQuery
-				BooleanQuery bQuery = new BooleanQuery();
-                QueryParser parserA = new MultiFieldQueryParser(Lucene.Net.Util.Version.LUCENE_30,
-												   queryFields, analyzer, boosts);
-                QueryParser parserB = new MultiFieldQueryParser(Lucene.Net.Util.Version.LUCENE_30,
-												   queryFields, analyzer, boosts);
-                
-				Query queryA = parserA.Parse(partA);
-				Query queryB = parserB.Parse(partB);
-
-                if (quotes != "")
-                {
-                    Query queryC = parserA.Parse(quotes);
-                    bQuery.Add(queryC, Occur.SHOULD);
-                }
-
-				bQuery.Add(queryA, Occur.MUST);
-				bQuery.Add(queryB, Occur.MUST);
-
-                query = bQuery;
-
+                query = PreprocessQuery(text, parser);
             }
             else
             {
-				// add "" phrases and boost
-				float quoteBoost = 5.0f;
-				string quotes = GetQuotesAndBoost(text, quoteBoost);
-				text = text + " " + quotes;
-
 				// no preprocessing
-                parser = new MultiFieldQueryParser(Lucene.Net.Util.Version.LUCENE_30,
-				                                    queryFields, analyzer, boosts);
                 query = parser.Parse(text);
 			}
 
