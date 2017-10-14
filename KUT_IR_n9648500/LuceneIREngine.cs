@@ -85,13 +85,41 @@ namespace KUT_IR_n9648500
             {
                 string docText = FileHandling.ReadTextFile(fn);
                 IRDocument doc = collection.GetNewDoc(docText);
-                docIndex = int.Parse(doc.GetDocID())-1;
-                docArray[docIndex] = doc;
-                doc.AddToIndex(writer);
+                if (doc != null)
+                {
+                    docIndex = int.Parse(doc.GetDocID()) - 1;
+                    docArray[docIndex] = doc;
+                    doc.AddToIndex(writer);
+                }
+                else
+                {
+                    Console.WriteLine("Error with file: " + fn);
+                }
             });
+
+            /*
+            foreach(string fn in fileNames)
+            {
+                string docText = FileHandling.ReadTextFile(fn);
+                IRDocument doc = collection.GetNewDoc(docText);
+                if (doc != null)
+                {
+                    docIndex = int.Parse(doc.GetDocID()) - 1;
+                    docArray[docIndex] = doc;
+                    doc.AddToIndex(writer);
+                }
+                else
+                {
+                    Console.WriteLine("Error with file: " + fn);
+                }
+            }*/
 
             List<IRDocument> docList = docArray.ToList();
 
+            // remove possible nulls if there is a dodgy input file
+            docList.RemoveAll(item => item == null);
+
+            // add documents to collection object and set maxResults
             collection.AddDocs(docList);
             maxResults = docList.Count;
 

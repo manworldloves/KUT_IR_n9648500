@@ -41,14 +41,22 @@ namespace KUT_IR_n9648500
             string[] docParts = docText.Split(delims, StringSplitOptions.RemoveEmptyEntries);
 
             // strip end of line chars from the fields
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < docParts.Length-1; i++)
             {
                 docParts[i] = docParts[i].Trim();
             }
 
             // check that the doc was structure correctly and has a docID that is an int
-
-            return new JournalAbstract(docParts);
+            int numParts = docParts.Length;
+            int num = 0;
+            if (numParts >= 5 && int.TryParse(docParts[0], out num))
+            {
+                return new JournalAbstract(docParts);    
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public override void AddToIndex(Lucene.Net.Index.IndexWriter writer)
