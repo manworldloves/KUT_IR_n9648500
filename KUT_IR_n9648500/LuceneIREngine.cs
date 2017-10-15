@@ -113,6 +113,48 @@ namespace KUT_IR_n9648500
             return collection;
         }
 
+        public void ReportDocSizes()
+        {
+            List<int> tSize = new List<int>();
+            List<int> aSize = new List<int>();
+
+            for (int i = 0; i < myCollection.Length(); i++)
+            {
+                JournalAbstract d = myCollection.GetIRDocument(i) as JournalAbstract;
+                List<string> tt = TextProcessing.TokeniseString(d.Title);
+                List<string> ta = TextProcessing.TokeniseString(d.Words);
+
+                tSize.Add(tt.Count);
+                aSize.Add(ta.Count);
+            }
+
+            int tmin = -1, tmax = -1 , amin = -1, amax = -1;
+            foreach(int c in tSize)
+            {
+                if (c != 0)
+                {
+                    if (tmin == -1 || c < tmin)
+                        tmin = c;
+                    if (tmax == -1 || c > tmax)
+                        tmax = c;
+                }
+            }
+            foreach (int c in aSize)
+            {
+                if (c != 0)
+                {
+                    if (amin == -1 || c < amin)
+                        amin = c;
+                    if (amax == -1 || c > amax)
+                        amax = c;
+                }
+            }
+
+            Console.WriteLine("Title - min=" + tmin + " max=" + tmax);
+            Console.WriteLine("Words - min=" + amin + " max=" + amax);
+        }
+            
+
         /// Builds the index...
         public int CreateIndex(string collectionPath, string indexPath)
         {
@@ -136,6 +178,8 @@ namespace KUT_IR_n9648500
             DateTime end = DateTime.Now;
             TimeSpan duration = end - start;
             indexTime = duration.Seconds + (float)duration.Milliseconds / 1000;
+
+            ReportDocSizes();
 
             return myCollection.Length();
         }

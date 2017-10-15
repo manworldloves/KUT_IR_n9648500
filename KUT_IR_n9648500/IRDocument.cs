@@ -111,7 +111,7 @@ namespace KUT_IR_n9648500
         {
             string[] qSugs = new string[collectionDocs.Count];
             
-            for (int i = 0; i < collectionDocs.Count-1; i++)
+            for (int i = 0; i < collectionDocs.Count; i++)
             {
                 qSugs[i] = collectionDocs[i].GetQuerySuggestion();
             }
