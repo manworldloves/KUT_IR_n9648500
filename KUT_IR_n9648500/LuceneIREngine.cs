@@ -28,6 +28,7 @@ namespace KUT_IR_n9648500
         Similarity mySimilarity;
 
         private IRCollection myCollection;
+        private IRCollection resultsCollection;
         private TopDocs searchResults;
         private int maxResults = 0; // this is set when the collection is built
 
@@ -254,20 +255,36 @@ namespace KUT_IR_n9648500
 
         /// Builds an IRCollection from the search results.
         //  This is used to display the search results.
-        public IRCollection BuildResults()
+        public int BuildResults()
         {
-            // rewrite this to use IRCollection object rather than index
             CreateSearcher();
 
             IRCollection resultDocs = new IRCollection(myCollection, searcher, searchResults);
 
             CleanUpSearcher();
 
-            return resultDocs;
+            resultsCollection = resultDocs;
+
+            return resultDocs.Length();
+        }
+
+        public string[] GetResultSummary(int i)
+        {
+            return resultsCollection.GetIRDocument(i).GetResultSummary();
+        }
+
+        public IRDocument GetResultDocument(int i)
+        {
+            return resultsCollection.GetIRDocument(i);
+        }
+
+        public Dictionary<string, float> GetResultSummaryColDetails()
+        {
+            return resultsCollection.GetResultSummaryColDetails();
         }
 
         /// Writes a trec evaluation file from the search results.
-        public int WriteEvalFile(string fileName, string topicID, IRCollection results)
+        public int WriteEvalFile(string fileName, string topicID)
         {
             List<string> evalList = new List<string>();
 
@@ -302,9 +319,9 @@ namespace KUT_IR_n9648500
 
             // structure TopicID QO DocID rank score group
             string tempString = "";
-            for (int i = 0; i < results.Length(); i++)
+            for (int i = 0; i < resultsCollection.Length(); i++)
             {
-                IRDocument doc = results.GetIRDocument(i);
+                IRDocument doc = resultsCollection.GetIRDocument(i);
                 tempString = topicID + "\tQ0\t";
                 tempString += doc.GetDocID() + "\t";
                 tempString += doc.Rank + "\t";
@@ -333,7 +350,8 @@ namespace KUT_IR_n9648500
                 RunQuery(q.Value, preproc, out dontcare);
 
                 // get results
-                IRCollection results = BuildResults();
+                //IRCollection results = BuildResults();
+                int numResults = BuildResults();
 
 				// write to file
 				string groupName = "09648500_NathanOnly";
@@ -342,9 +360,9 @@ namespace KUT_IR_n9648500
 
 				// structure TopicID QO DocID rank score group
 				string tempString = "";
-				for (int i = 0; i < results.Length(); i++)
+				for (int i = 0; i < numResults; i++)
 				{
-					IRDocument doc = results.GetIRDocument(i);
+					IRDocument doc = resultsCollection.GetIRDocument(i);
 					tempString = topicID + "\tQ0\t";
 					tempString += doc.GetDocID() + "\t";
 					tempString += doc.Rank + "\t";

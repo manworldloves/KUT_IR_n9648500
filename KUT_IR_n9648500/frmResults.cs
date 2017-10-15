@@ -13,10 +13,11 @@ namespace KUT_IR_n9648500
 {
     public partial class frmResults : Form
     {
-        LuceneIREngine myIREngine = new LuceneIREngine();
-        IRCollection myResultCollection;
-        int pageNumber;
-        string topicID;
+        private LuceneIREngine myIREngine = new LuceneIREngine();
+        //IRCollection myResultCollection;
+        private int pageNumber;
+        private int numResults;
+        private string topicID;
 
         public frmResults()
         {
@@ -30,29 +31,26 @@ namespace KUT_IR_n9648500
             topicID = topic;
             pageNumber = 0;
 
-            /// good tutorial
-            /// https://docs.microsoft.com/en-us/dotnet/framework/winforms/controls/walkthrough-creating-an-unbound-windows-forms-datagridview-control
-            ///
-            myResultCollection = myIREngine.BuildResults();
+            // build the results collection
+            numResults = myIREngine.BuildResults();
 
             // setup datagrid
-            SetupDataGrid(myResultCollection.GetIRDocument(0).GetResultSummaryColDetails());
+            SetupDataGrid(myIREngine.GetResultSummaryColDetails());
             PopulateDataGrid(0);
 
             // setup buttons
             btnPrevious.Enabled = false;
-            if (myResultCollection.Length() <= 10)
+            if (numResults <= 10)
                 btnNext.Enabled = false;
             
             // report total results and query time
-            lblTotalResults.Text = "Total Results: " + myResultCollection.Length();
+            lblTotalResults.Text = "Total Results: " + numResults;
             lblQueryTime.Text = "Time to query: " + myIREngine.queryTime + " sec";
-
-            //JournalAbstract toprank = myResultCollection.GetIRDocument(0) as JournalAbstract;
-            //MessageBox.Show("Top doc is docID: " + toprank.DocID);
 
         }
 
+        // sets up the results datagrid with the col names and sizes
+        // also sets up the interaction params for the datagrid
         private void SetupDataGrid(Dictionary<string, float> colDetails)
         {
             string[] colNames = colDetails.Keys.ToArray();
@@ -77,13 +75,13 @@ namespace KUT_IR_n9648500
             int resultEnd = resultStart + 10;
 
             // check that there are at least 10 more results to display
-            if (myResultCollection.Length() < resultEnd)
-                resultEnd = myResultCollection.Length();
+            if (numResults < resultEnd)
+                resultEnd = numResults;
 
             // records to the datagrid
             for (int i = resultStart; i < resultEnd; i++)
             {
-                string[] newRow = myResultCollection.GetIRDocument(i).GetResultSummary();
+                string[] newRow = myIREngine.GetResultSummary(i);
                 dgSearchResults.Rows.Add(newRow);
             }
 
@@ -94,9 +92,8 @@ namespace KUT_IR_n9648500
         private void DisplayDetailedResults()
         {
 			int rowSelection = dgSearchResults.SelectedCells[0].RowIndex;
-			//MessageBox.Show("Selected row: " + rowSelection);
 			int docToDisplay = pageNumber * 10 + rowSelection;
-			Form detailsForm = new frmDetail(myResultCollection.GetIRDocument(docToDisplay));
+			Form detailsForm = new frmDetail(myIREngine.GetResultDocument(docToDisplay));
 			detailsForm.Show();
         }
 
@@ -110,7 +107,7 @@ namespace KUT_IR_n9648500
 
             if (fileName != "")
             {
-                myIREngine.WriteEvalFile(fileName, topicID, myResultCollection);
+                myIREngine.WriteEvalFile(fileName, topicID);
             }
         }
 
@@ -140,7 +137,7 @@ namespace KUT_IR_n9648500
             else
                 btnPrevious.Enabled = true;
 
-            if (pageNumber * 10 + 10 > myResultCollection.Length())
+            if (pageNumber * 10 + 10 > numResults)
                 btnNext.Enabled = false;
             else
                 btnNext.Enabled = true;

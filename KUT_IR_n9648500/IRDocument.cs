@@ -125,6 +125,14 @@ namespace KUT_IR_n9648500
             return qSugs;
         }
 
+        public Dictionary<string, float> GetResultSummaryColDetails()
+        {
+            if (collectionDocs.Count > 0)
+                return collectionDocs[0].GetResultSummaryColDetails();
+            else
+                return null;
+        }
+
         public IRDocument GetIRDocument(int index)
         {
             return collectionDocs[index];
