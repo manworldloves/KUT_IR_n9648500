@@ -94,7 +94,7 @@ namespace KUT_IR_n9648500
             Parallel.ForEach(fileNames, fn =>
             {
                 string docText = FileHandling.ReadTextFile(fn);
-                IRDocument doc = GetNewDoc(docText); //collection.GetNewDoc(docText);
+                IRDocument doc = GetNewDoc(docText);
                 if (doc != null)
                 {
                     conDocs.Add(doc);
