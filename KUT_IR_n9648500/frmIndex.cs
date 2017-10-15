@@ -1,28 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-
-
 
 namespace KUT_IR_n9648500
 {
     public partial class frmIndex : Form
     {
-        private string collectionFolder, indexFolder;
-
         LuceneIREngine myIREngine = new LuceneIREngine();
+        private string collectionFolder, indexFolder;
 
         public frmIndex()
         {
             InitializeComponent();
             btnCreateIndex.Enabled = false;
 
+            // retrieve save directory info if available
             collectionFolder = Properties.Settings.Default.collectionDir;
             indexFolder = Properties.Settings.Default.indexDir;
             if (collectionFolder != "")
@@ -34,6 +25,7 @@ namespace KUT_IR_n9648500
             checkEnableCreateIndex();
 		}
 
+        // get the collection directory
         private void btnCollection_Click(object sender, EventArgs e)
         {
             collectionFolderBrowserDialog.ShowDialog();
@@ -42,6 +34,7 @@ namespace KUT_IR_n9648500
             checkEnableCreateIndex();
         }
 
+        // get the index directory
         private void btnIndex_Click(object sender, EventArgs e)
         {
             indexFolderBrowserDialog.ShowDialog();
@@ -50,6 +43,7 @@ namespace KUT_IR_n9648500
             checkEnableCreateIndex();
         }
 
+        // build the index
         private void btnCreateIndex_Click(object sender, EventArgs e)
         {
             int numberDocs = myIREngine.CreateIndex(collectionFolder, indexFolder);
@@ -61,7 +55,7 @@ namespace KUT_IR_n9648500
                 Properties.Settings.Default.indexDir = indexFolder;
                 Properties.Settings.Default.Save();
 
-                float indexTime = myIREngine.indexTime;
+                float indexTime = myIREngine.IndexTime;
                 MessageBox.Show(numberDocs + " documents added to index!\nTime to index: "
                                 + indexTime + " seconds");
 
@@ -74,14 +68,15 @@ namespace KUT_IR_n9648500
                 MessageBox.Show("There was a problem creating the index.\n" 
                                + "Try again.");
             }
-
         }
 
+        // close this form (and the application)
         private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
+        // check if there is enough info to build the index
         private void checkEnableCreateIndex()
         {
             if ((collectionFolder != "") && (indexFolder != ""))

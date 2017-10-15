@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Collections.Generic; // for List<> object
+using System.Linq; // for collection manipulation ie. ToArray()
 using System.Windows.Forms;
-using Lucene.Net.Search;
 
 namespace KUT_IR_n9648500
 {
@@ -36,9 +30,9 @@ namespace KUT_IR_n9648500
             // build query autocomplete options
             allSugs = myIREngine.GetQuerySuggestions();
             lbSuggestions.Visible = false;
-            
+
             // this button was used for testing purposes
-            btnAutoQuery.Visible = true;
+            btnAutoQuery.Visible = false;
         }
 
         private void chkProcess_CheckedChanged(object sender, EventArgs e)
@@ -55,6 +49,7 @@ namespace KUT_IR_n9648500
                 int numberOfResults = myIREngine.RunQuery(txtQuery.Text, 
                                                           chkProcess.Checked, out qText);
 
+                // display the processed query text
                 tbProcQuery.Text = qText;
 
                 // open query dialog
@@ -75,6 +70,8 @@ namespace KUT_IR_n9648500
             }
         }
 
+        // opens these info needs file and gets the user to
+        // select a standard query
         private void btnOpenQueryFile_Click(object sender, EventArgs e)
         {
             // get the infoneeds txt file
@@ -108,6 +105,52 @@ namespace KUT_IR_n9648500
             }
         }
 
+        // closes this form
+        private void btnClose_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        // builds and displays the query suggestion box
+        private void txtQuery_TextChanged(object sender, EventArgs e)
+        {
+            // reset the suggestions
+            lbSuggestions.Items.Clear();
+            
+            // if something has been typed, update the suggestions and display
+            if (txtQuery.Text != "")
+            {
+                // not null, matches the start of lowercase text, is distinct
+                string[] qSugs = allSugs.Where(x => x != null && x.StartsWith(txtQuery.Text.ToLower(), StringComparison.CurrentCulture))
+                                        .Distinct().ToArray();
+                if (qSugs.Length > 0)
+                {
+                    lbSuggestions.Items.AddRange(qSugs);
+                    lbSuggestions.Visible = true;
+                }
+                else
+                {
+                    lbSuggestions.Visible = false;
+                }
+            }
+            else
+            {
+                // else, hide the suggestions
+                lbSuggestions.Visible = false;
+            }
+        }
+
+        // allows the user to select a suggestion
+        private void lbSuggestions_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // if the user selects a suggestions,
+            // set it as the query text and hide suggestions
+            txtQuery.Text = lbSuggestions.Text;
+            lbSuggestions.Visible = false;
+        }
+
+        // for testing purposes only
+        // runs all of the standard queries
         private void btnAutoQuery_Click(object sender, EventArgs e)
         {
             // do stuff
@@ -120,49 +163,6 @@ namespace KUT_IR_n9648500
 
             myIREngine.AutoResults(resultsFile, infoNeeds, chkProcess.Checked);
 
-        }
-
-        private void btnClose_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
-
-        private void txtQuery_TextChanged(object sender, EventArgs e)
-        {
-            // reset the suggestions
-            lbSuggestions.Items.Clear();
-            
-            // if something has been typed, update the suggestions and display
-            if (txtQuery.Text != "")
-            {
-                // not null, matches the start of lowercase text, is distinct
-                string[] qSugs = allSugs.Where(x => x != null && x.StartsWith(txtQuery.Text.ToLower())).Distinct().ToArray();
-                if (qSugs.Length > 0)
-                {
-                    lbSuggestions.Items.AddRange(qSugs);
-                    lbSuggestions.Visible = true;
-                }
-                else
-                {
-                    lbSuggestions.Visible = false;
-                }
-
-
-            }
-            else
-            {
-                // else, hide the suggestions
-                lbSuggestions.Visible = false;
-            }
-
-        }
-
-        private void lbSuggestions_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            // if the user selects a suggestions,
-            // set it as the query text and hide suggestions
-            txtQuery.Text = lbSuggestions.Text;
-            lbSuggestions.Visible = false;
         }
     }
 }

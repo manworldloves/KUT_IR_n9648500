@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Generic; // used for List<> object
 namespace KUT_IR_n9648500
 {
-    public class InfoNeeds
+    public static class InfoNeeds
     {
-
-        public InfoNeeds()
-        {
-        }
-
+        // Parses a standard information needs file
         public static Dictionary<string, string> GetInfoNeeds(string fileName)
         {
             Dictionary<string, string> iNeeds = new Dictionary<string, string>();
@@ -28,8 +24,6 @@ namespace KUT_IR_n9648500
                 // inc i so that it goes up 2 each iteration
                 i++;
             }
-
-
 
             return iNeeds;
         }

@@ -1,9 +1,8 @@
 using System;
-using System.Collections.Generic;
+using System.Collections.Generic; // used for List<> object
 using System.Collections.Concurrent; // for threading collection
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Linq; // used for collection manipulation ie. ToList()
+using System.Threading.Tasks; // used for ForEach threading
 using Lucene.Net.Analysis; // for Analyser
 using Lucene.Net.Analysis.Snowball;
 using Lucene.Net.Documents; // for Document and Field
@@ -25,18 +24,25 @@ namespace KUT_IR_n9648500
         Lucene.Net.Index.IndexWriter writer;
         Lucene.Net.Search.IndexSearcher searcher;
         Lucene.Net.QueryParsers.QueryParser parser;
-        Similarity mySimilarity;
+        Lucene.Net.Search.Similarity mySimilarity;
 
         private IRCollection myCollection;
         private IRCollection resultsCollection;
         private TopDocs searchResults;
         private int maxResults = 0; // this is set when the collection is built
 
-        public float indexTime;
-        public float queryTime;
+        private float indexTime;
+        private float queryTime;
+
+        public float IndexTime { get { return indexTime; } }
+        public float QueryTime { get { return queryTime; } }
+
+        private delegate IRDocument NewIRDocDelegate(string docText);
+
+        // this setting needs to be changed if document type changes...
+        NewIRDocDelegate GetNewDoc = new NewIRDocDelegate(JournalAbstract.JAParse);
 
         const Lucene.Net.Util.Version VERSION = Lucene.Net.Util.Version.LUCENE_30;
-        
 
         /// class constructor
         public LuceneIREngine()
@@ -48,7 +54,6 @@ namespace KUT_IR_n9648500
             mySimilarity = new CustomSimilarity();
         }
 
-        #region Index
         /// helper function for CreateIndex()
         // sets up lucene index ready for adding documents
         private void InitIndex(string indexPath)
@@ -89,7 +94,7 @@ namespace KUT_IR_n9648500
             Parallel.ForEach(fileNames, fn =>
             {
                 string docText = FileHandling.ReadTextFile(fn);
-                IRDocument doc = collection.GetNewDoc(docText);
+                IRDocument doc = GetNewDoc(docText); //collection.GetNewDoc(docText);
                 if (doc != null)
                 {
                     conDocs.Add(doc);
@@ -134,9 +139,7 @@ namespace KUT_IR_n9648500
 
             return myCollection.Length();
         }
-        #endregion
 
-        #region Query
         // builds a list of query suggestions
         public string[] GetQuerySuggestions()
         {
@@ -158,20 +161,9 @@ namespace KUT_IR_n9648500
             searcher.Dispose();
         }
 
-        private List<string> AddBoostToStringArray(List<string> tokens, float boost)
-        {
-            List<string> outputTokens = new List<string>();
-            foreach (string token in tokens)
-            {
-                outputTokens.Add(token + '^' + boost);
-            }
-
-            return outputTokens;
-        }
-
         // Method to take users query text as input
         // and does various things to it to produce
-        // the actual text that is input to the searcher
+        // the a query that is input to the searcher
         public Query PreprocessQuery(string origText, QueryParser parser)
         {
             // builds a boolean query
@@ -219,7 +211,7 @@ namespace KUT_IR_n9648500
                 boosts.Add(queryFields[i], queryFieldBoosts[i]);
             }
 
-            // setup query and searcher
+            // setup searcher, query and parser
             CreateSearcher();
             Query query;
             parser = new MultiFieldQueryParser(Lucene.Net.Util.Version.LUCENE_30,
@@ -251,10 +243,10 @@ namespace KUT_IR_n9648500
 
             return searchResults.TotalHits;
         }
-        #endregion
 
         /// Builds an IRCollection from the search results.
         //  This is used to display the search results.
+        //  returns the number of results
         public int BuildResults()
         {
             CreateSearcher();
@@ -268,29 +260,33 @@ namespace KUT_IR_n9648500
             return resultDocs.Length();
         }
 
+        // gets a result summary info for results view
         public string[] GetResultSummary(int i)
         {
             return resultsCollection.GetIRDocument(i).GetResultSummary();
         }
 
+        // gets the selected document for the details view
         public IRDocument GetResultDocument(int i)
         {
             return resultsCollection.GetIRDocument(i);
         }
 
+        // gets the column name and size for results view setup
         public Dictionary<string, float> GetResultSummaryColDetails()
         {
             return resultsCollection.GetResultSummaryColDetails();
         }
 
         /// Writes a trec evaluation file from the search results.
+        /// if the query is not a standard one, '000' is used as the topicID
         public int WriteEvalFile(string fileName, string topicID)
         {
             List<string> evalList = new List<string>();
 
             bool appendFlag = true;
             // check if the file exists
-            if (System.IO.File.Exists(fileName) == true)
+            if (File.Exists(fileName) == true)
             {
                 // prompt for append
                 DialogResult append = MessageBox.Show("Do you want to append to the existing file?",

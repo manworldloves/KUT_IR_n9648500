@@ -1,16 +1,13 @@
-﻿using System;
-using Lucene.Net.Search;
-using FieldInvertState = Lucene.Net.Index.FieldInvertState;
+﻿using Lucene.Net.Search;
 
 namespace KUT_IR_n9648500
 {
 	public class CustomSimilarity : DefaultSimilarity
 	{
-        /*public override float Coord(int a, int b)
-		{
-            return (float)(a / Math.Sqrt(b));
-		}*/
-
+        // Tf normally returns sqrt(freq)
+        // This is not required for this application
+        // as the document sizes are relatively similar so
+        // freq does not have a wide range of values
         public override float Tf(float freq)
         {
             return freq;

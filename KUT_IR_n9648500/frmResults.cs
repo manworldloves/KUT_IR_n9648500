@@ -1,20 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Collections.Generic; // for List<> object
+using System.Linq; // for collection manipulation ie. ToArray()
 using System.Windows.Forms;
-using Lucene.Net.Search;
 
 namespace KUT_IR_n9648500
 {
     public partial class frmResults : Form
     {
         private LuceneIREngine myIREngine = new LuceneIREngine();
-        //IRCollection myResultCollection;
         private int pageNumber;
         private int numResults;
         private string topicID;
@@ -45,7 +38,7 @@ namespace KUT_IR_n9648500
             
             // report total results and query time
             lblTotalResults.Text = "Total Results: " + numResults;
-            lblQueryTime.Text = "Time to query: " + myIREngine.queryTime + " sec";
+            lblQueryTime.Text = "Time to query: " + myIREngine.QueryTime + " sec";
 
         }
 
@@ -68,6 +61,7 @@ namespace KUT_IR_n9648500
 
         }
 
+        // fills the datagrid with the results summary info
         private void PopulateDataGrid(int pageOffset)
         {
             dgSearchResults.Rows.Clear();
@@ -89,6 +83,7 @@ namespace KUT_IR_n9648500
             lblResultRange.Text = (resultStart + 1) + " - " + resultEnd;
         }
 
+        // opens the details view based on the selected record
         private void DisplayDetailedResults()
         {
 			int rowSelection = dgSearchResults.SelectedCells[0].RowIndex;
@@ -97,6 +92,7 @@ namespace KUT_IR_n9648500
 			detailsForm.Show();
         }
 
+        // allows the user to save the query results
         private void btnSaveResults_Click(object sender, EventArgs e)
         {
             saveFileDialog.CheckFileExists = false;
@@ -111,11 +107,7 @@ namespace KUT_IR_n9648500
             }
         }
 
-        private void btnClearResults_Click(object sender, EventArgs e)
-        {
- 
-        }
-
+        // navigates back through the results
         private void btnPrevious_Click(object sender, EventArgs e)
         {
             pageNumber -= 1;
@@ -123,6 +115,7 @@ namespace KUT_IR_n9648500
             CheckButtonsToEnable();
         }
 
+        // navigates forward through the results
         private void btnNext_Click(object sender, EventArgs e)
         {
             pageNumber += 1;
@@ -130,6 +123,7 @@ namespace KUT_IR_n9648500
             CheckButtonsToEnable();
         }
 
+        // enables or disables the results navigation buttons
         private void CheckButtonsToEnable()
         {
             if (pageNumber == 0)
@@ -148,21 +142,25 @@ namespace KUT_IR_n9648500
             // do nothing
         }
 
+        // open details view on double click of cell
         private void dgSearchResults_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             DisplayDetailedResults();
         }
 
+        // open details view on double click of row header
         private void dgSearchResults_RowHeaderMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             DisplayDetailedResults();
         }
 
+        // open details view on clicking the open detail button
         private void btnOpenDetails_Click(object sender, EventArgs e)
         {
             DisplayDetailedResults();
         }
 
+        // close this form
         private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();

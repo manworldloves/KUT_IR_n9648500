@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace KUT_IR_n9648500
@@ -17,6 +10,10 @@ namespace KUT_IR_n9648500
             InitializeComponent();
         }
 
+        // Display the details of the IRDocument
+        // as this form is specific to the IRDocument type
+        // this detail will need to be updated if he IRDocument
+        // type is change for a different application
         public frmDetail(IRDocument doc)
         {
             InitializeComponent();
@@ -27,6 +24,7 @@ namespace KUT_IR_n9648500
             lblTitle.Text = JAdoc.Title;
         }
 
+        // close this form
         private void btnOK_Click(object sender, EventArgs e)
         {
             this.Close();

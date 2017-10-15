@@ -1,17 +1,11 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Collections.Generic; // used for List<> object
+using System.Linq; // used for colleciton conversion ie. ToList()
 
 namespace KUT_IR_n9648500
 {
-    public class TextProcessing
+    public static class TextProcessing
     {
-        // This class is really just for query pre-processing
-        public TextProcessing()
-        {
-
-        }
-
         // split the string into tokens
         public static List<string> TokeniseString(string text)
 		{
@@ -26,6 +20,15 @@ namespace KUT_IR_n9648500
 
 			return tokens.ToList();
 		}
+
+        // finds the first sentence of an input string
+        public static string GetFirstSentence(string paragraph)
+        {
+            char[] delims = { '.' };
+            string firstSentence = paragraph.Split(delims, StringSplitOptions.RemoveEmptyEntries)[0];
+            firstSentence = firstSentence.TrimStart(new char[] { ' ' }) + '.';
+            return firstSentence;
+        }
 
         // create N-Grams from query input text
 		public static List<string> getNGrams(List<string> tokens, int n)
@@ -59,41 +62,6 @@ namespace KUT_IR_n9648500
 			}
 
 			return nGrams;
-		}
-
-        // get synonyms from query text
-        public static List<string> getSynonyms(List<string> words)
-        {
-            List<string> synonyms = new List<string> { "gesicht" };
-
-            return synonyms;
-        }
-
-        // remove stop words and small words from  token list
-		public static List<string> RemoveStopWords(List<string> tokens)
-		{
-			// init stop words
-			string[] stopWords = { "a", "an", "and", "are", "as", "at", "be", "but", "by",
-				"for", "if", "in", "into", "is", "it", "no", "not", "of", "on", "or", "such",
-				"that", "the", "their", "then", "there", "these", "they", "this", "to", "was",
-				"will", "with" , "you", "nobody", "like"};
-
-
-			// work backwards through list and remove any stopwords
-            // or words less than 3 characters
-			for (int i = tokens.Count - 1; i >= 0; i--)
-			{
-				if (stopWords.Contains(tokens[i]))
-				{
-					tokens.RemoveAt(i);
-				}
-				else if (tokens[i].Length < 3)
-				{
-					tokens.RemoveAt(i);
-				}
-			}
-
-			return tokens;
 		}
     }
 }

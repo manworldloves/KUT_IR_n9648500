@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
+﻿using System.Collections.Generic; // used for List<> object
 using Lucene.Net.Search;
 using Lucene.Net.Documents;
-using System.Linq;
+
 
 namespace KUT_IR_n9648500
 {
+    // abstract class to enable abstraction of document types
     public abstract class IRDocument
     {
         protected int rank;
@@ -24,6 +23,7 @@ namespace KUT_IR_n9648500
 
     }
 
+    // class of query parameters that might be used
     public class IRQueryParams
     {
         private string[] fields;
@@ -59,17 +59,14 @@ namespace KUT_IR_n9648500
     {
         private List<IRDocument> collectionDocs;
 
-        ///
-        /// Update the custom doc constructors in these methods:
-        /// 1. cstr IRCollection(IndexSearch, TopDocs)
-        /// 2. IRDocument Add(string)
-        /// 
         public IRCollection()
         {
             //default constructor
             collectionDocs = new List<IRDocument>();
         }
 
+        // this is used to build an IRCollection from an original IRCollection 
+        // and a set of results
 		public IRCollection(IRCollection origCollection, IndexSearcher searcher, TopDocs results)
 		{
 			List<IRDocument> resultCollection = new List<IRDocument>();
@@ -91,28 +88,25 @@ namespace KUT_IR_n9648500
 			}
 		}
 
+        // Add one IRDocument to the collection
         public void AddDoc(IRDocument doc)
         {
             collectionDocs.Add(doc);
         }
 
+        // Add a set of IRDocuments to the collection
         public void AddDocs(List<IRDocument> docs)
         {
             collectionDocs.AddRange(docs);
         }
 
-        public IRDocument GetNewDoc(string docText)
-        {
-            IRDocument doc = JournalAbstract.JAParse(docText);
-
-            return doc;
-        }
-
+        // returns the query parameters for the IRDocument type
         public IRQueryParams GetQueryParams()
         {
             return collectionDocs[0].GetQueryParams();
         }
 
+        // returns the query suggestions for the IRDocument type
         public string[] GetQuerySuggestions()
         {
             string[] qSugs = new string[collectionDocs.Count];
@@ -125,6 +119,7 @@ namespace KUT_IR_n9648500
             return qSugs;
         }
 
+        // returns the results table setup info
         public Dictionary<string, float> GetResultSummaryColDetails()
         {
             if (collectionDocs.Count > 0)
@@ -133,11 +128,13 @@ namespace KUT_IR_n9648500
                 return null;
         }
 
+        // returns an IRDocument at an index
         public IRDocument GetIRDocument(int index)
         {
             return collectionDocs[index];
         }
 
+        // returns the number of IRDocuments in the collection
         public int Length()
         {
             return collectionDocs.Count;

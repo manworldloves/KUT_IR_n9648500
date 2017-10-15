@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Collections.Generic; // for List<> object
+using System.Linq; // for collection manipulation ie. ToArray()
 using System.Windows.Forms;
 
 namespace KUT_IR_n9648500
@@ -29,12 +24,11 @@ namespace KUT_IR_n9648500
             lbQueries.Items.AddRange(infoNeeds.Keys.ToArray());
 		}
 
+        // returns the TopicID selected by the user
         private void btnGetQuery_Click(object sender, EventArgs e)
         {
             selectedTopicID = lbQueries.SelectedItem.ToString();
             this.Close();
         }
-
-
     }
 }

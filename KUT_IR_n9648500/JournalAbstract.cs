@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Collections.Generic; // used for List<> object
 using Lucene.Net.Documents;
 
 namespace KUT_IR_n9648500
 {
     class JournalAbstract : IRDocument
     {
-        // from source
         private string docID;
         private string title;
         private string author;
@@ -21,6 +17,11 @@ namespace KUT_IR_n9648500
 		public string Author { get { return author; } }
 		public string BiblioInfo { get { return biblioInfo; } }
 		public string Words { get { return words; } }
+
+        public JournalAbstract()
+        {
+            // default constructor
+        }
 
         public JournalAbstract(string[] docParts)
         {
@@ -34,6 +35,7 @@ namespace KUT_IR_n9648500
             words = docParts[4].Trim();
         }
 
+        // parses the input string and checks for correct structure
         public static JournalAbstract JAParse(string docText)
         {
             string[] delims = { ".I", ".T", ".A", ".B", ".W" };
@@ -59,6 +61,7 @@ namespace KUT_IR_n9648500
             }
         }
 
+        // addes the record to the index
         public override void AddToIndex(Lucene.Net.Index.IndexWriter writer)
         {
             // Custom add to index method for JournalAbstract class
@@ -87,15 +90,17 @@ namespace KUT_IR_n9648500
             writer.AddDocument(doc);
         }
 
+        // use the title as a query suggestion
         public override string GetQuerySuggestion()
         {
             return title;
         }
 
+        // set the query parameters for this IRDocument type
         public override IRQueryParams GetQueryParams()
         {
-            string[] fields = new string[] { "title", "words" };
-            float[] fieldBoost = new float[] { 1.0f, 1.0f };
+            string[] fields = { "title", "words" };
+            float[] fieldBoost = { 1.0f, 1.0f };
             bool removeStopWords = false;
             int nGrams = 3;
             float nGramBoost = 0.2f;
@@ -110,6 +115,7 @@ namespace KUT_IR_n9648500
             return querySettings;
         }
 
+        // provide the column names and size for results view
         public override Dictionary<string, float> GetResultSummaryColDetails()
         {
             Dictionary<string, float> colDetails = new Dictionary<string, float>();
@@ -121,25 +127,20 @@ namespace KUT_IR_n9648500
 
             return colDetails;
         }
-        
+
+        // provide the results summary info for results view
         public override string[] GetResultSummary()
         {
-            return new string[] { title, author, biblioInfo, GetFirstSentence(words) };
+            return new string[] { title, author, biblioInfo, TextProcessing.GetFirstSentence(words) };
         }
 
-        private string GetFirstSentence(string paragraph)
-        {
-            char[] delims = { '.' };
-            string firstSentence = paragraph.Split(delims, StringSplitOptions.RemoveEmptyEntries)[0];
-            firstSentence = firstSentence.TrimStart(new char[] { ' ' }) + '.';
-            return firstSentence;
-        }
-
+        // returns the docID
 		public override string GetDocID()
 		{
             return docID;
 		}
 
+        // override of ToString function - used for testing
         override public string ToString()
         {
             string outString = "";
