@@ -74,7 +74,7 @@ namespace KUT_IR_n9648500
             Field fieldBibInfo = new Field("biblioInfo", biblioInfo, Field.Store.NO,
                                             Field.Index.NOT_ANALYZED, Field.TermVector.NO);
             Field fieldWords = new Field("words", words, Field.Store.NO,
-                                            Field.Index.ANALYZED, Field.TermVector.YES);
+                                            Field.Index.ANALYZED, Field.TermVector.NO);
 
             // add boosts
             fieldTitle.Boost = 5;
