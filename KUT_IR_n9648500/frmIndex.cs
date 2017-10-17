@@ -80,7 +80,11 @@ namespace KUT_IR_n9648500
         private void checkEnableCreateIndex()
         {
             if ((collectionFolder != "") && (indexFolder != ""))
+            {
                 btnCreateIndex.Enabled = true;
+                this.AcceptButton = btnCreateIndex;
+            }
+                
         }
 
     }

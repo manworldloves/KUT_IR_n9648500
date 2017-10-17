@@ -40,6 +40,8 @@
             this.lbQueries.Name = "lbQueries";
             this.lbQueries.Size = new System.Drawing.Size(260, 147);
             this.lbQueries.TabIndex = 0;
+            this.lbQueries.DoubleClick += new System.EventHandler(this.lbQueries_DoubleClick);
+            this.lbQueries.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lbQueries_KeyDown);
             // 
             // lblQuerySelectTitle
             // 

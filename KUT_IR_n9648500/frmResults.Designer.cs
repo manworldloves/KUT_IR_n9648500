@@ -71,6 +71,7 @@
             this.dgSearchResults.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgSearchResults_CellContentClick);
             this.dgSearchResults.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgSearchResults_CellContentDoubleClick);
             this.dgSearchResults.RowHeaderMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgSearchResults_RowHeaderMouseDoubleClick);
+            this.dgSearchResults.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dgSearchResults_KeyDown);
             // 
             // btnSaveResults
             // 

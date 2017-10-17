@@ -15,6 +15,7 @@ namespace KUT_IR_n9648500
         {
             // default constructor
             InitializeComponent();
+
         }
 
 		public frmQuerySelect(Dictionary<string, string> infoNeeds)
@@ -29,6 +30,21 @@ namespace KUT_IR_n9648500
         {
             selectedTopicID = lbQueries.SelectedItem.ToString();
             this.Close();
+        }
+
+        private void lbQueries_DoubleClick(object sender, EventArgs e)
+        {
+            btnGetQuery.PerformClick();
+        }
+
+        private void lbQueries_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                btnGetQuery.PerformClick();
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+            }
         }
     }
 }

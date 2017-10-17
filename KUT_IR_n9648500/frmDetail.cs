@@ -22,6 +22,9 @@ namespace KUT_IR_n9648500
             lblBib.Text = JAdoc.BiblioInfo;
             lblAuthor.Text = JAdoc.Author;
             lblTitle.Text = JAdoc.Title;
+
+            // action for escape key
+            this.CancelButton = btnOK;
         }
 
         // close this form

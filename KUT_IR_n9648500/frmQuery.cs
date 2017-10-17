@@ -25,6 +25,8 @@ namespace KUT_IR_n9648500
             myIREngine = IREngine;
             chkProcess.Checked = true;
             tbProcQuery.Text = "";
+            lblQuery.Visible = false;
+            tbProcQuery.Visible = false;
             this.ActiveControl = txtQuery;
 
             // build query autocomplete options
@@ -32,7 +34,7 @@ namespace KUT_IR_n9648500
             lbSuggestions.Visible = false;
 
             // this button was used for testing purposes
-            btnAutoQuery.Visible = true;
+            btnAutoQuery.Visible = false;
         }
 
         private void chkProcess_CheckedChanged(object sender, EventArgs e)
@@ -51,6 +53,8 @@ namespace KUT_IR_n9648500
 
                 // display the processed query text
                 tbProcQuery.Text = qText;
+                lblQuery.Visible = true;
+                tbProcQuery.Visible = true;
 
                 // open query dialog
                 if (numberOfResults > 0)
@@ -97,6 +101,7 @@ namespace KUT_IR_n9648500
 				{
 					string stdQueryText = infoNeeds[topicID];
 					txtQuery.Text = stdQueryText;
+                    this.ActiveControl = btnQuery;
 				}
             }
             else
@@ -137,11 +142,20 @@ namespace KUT_IR_n9648500
             {
                 // else, hide the suggestions
                 lbSuggestions.Visible = false;
+                // and clear the processed query text
+                tbProcQuery.Visible = false;
+                lblQuery.Visible = false;
+
             }
         }
 
         // allows the user to select a suggestion
         private void lbSuggestions_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void SuggestionsSelected()
         {
             // if the user selects a suggestions,
             // set it as the query text and hide suggestions
@@ -163,6 +177,74 @@ namespace KUT_IR_n9648500
 
             myIREngine.AutoResults(resultsFile, infoNeeds, chkProcess.Checked);
 
+        }
+
+        private void txtQuery_KeyDown(object sender, KeyEventArgs e)
+        {
+            // escape clears the suggestion box away
+            if (e.KeyCode == Keys.Escape)
+            {
+                if (lbSuggestions.Visible == true)
+                {
+                    lbSuggestions.Visible = false;
+                }
+                else
+                {
+                    if (txtQuery.Text == "")
+                    {
+                        btnClose.PerformClick();
+                    }
+                    else
+                    {
+                        txtQuery.Text = "";
+                    }
+                }
+                
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+            }
+                
+            // down and up allow you to select a suggestion
+            if ((e.KeyCode == Keys.Down) && (lbSuggestions.SelectedIndex != lbSuggestions.Items.Count-1))
+                lbSuggestions.SelectedIndex += 1;
+
+            if ((e.KeyCode == Keys.Up) && (lbSuggestions.SelectedIndex != -1))
+                lbSuggestions.SelectedIndex -= 1;
+
+            // this is what the enter key does when entering a query
+            if (e.KeyCode == Keys.Enter)
+            {
+                if (lbSuggestions.Visible == true)
+                {
+                    if (lbSuggestions.SelectedIndex != -1)
+                    {
+                        SuggestionsSelected();
+                    }
+                }
+                else
+                {
+                    btnQuery.PerformClick();
+                }
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+            }
+        }
+
+        private void txtQuery_Enter(object sender, EventArgs e)
+        {
+            this.AcceptButton = null;
+            this.CancelButton = null;
+        }
+
+        private void txtQuery_Leave(object sender, EventArgs e)
+        {
+            this.AcceptButton = btnQuery;
+            this.CancelButton = btnClose;
+        }
+
+        private void lbSuggestions_DoubleClick(object sender, EventArgs e)
+        {
+            SuggestionsSelected();
         }
     }
 }

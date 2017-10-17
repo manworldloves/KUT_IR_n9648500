@@ -27,6 +27,9 @@ namespace KUT_IR_n9648500
             // build the results collection
             numResults = myIREngine.BuildResults();
 
+            // setup escape key actions
+            this.CancelButton = btnClose;
+
             // setup datagrid
             SetupDataGrid(myIREngine.GetResultSummaryColDetails());
             PopulateDataGrid(0);
@@ -131,7 +134,7 @@ namespace KUT_IR_n9648500
             else
                 btnPrevious.Enabled = true;
 
-            if (pageNumber * 10 + 10 > numResults)
+            if (pageNumber * 10 + 10 >= numResults)
                 btnNext.Enabled = false;
             else
                 btnNext.Enabled = true;
@@ -160,10 +163,27 @@ namespace KUT_IR_n9648500
             DisplayDetailedResults();
         }
 
+        private void dgSearchResults_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                DisplayDetailedResults();
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+            }
+            if (e.KeyCode == Keys.Right)
+                btnNext.PerformClick();
+            if (e.KeyCode == Keys.Left)
+                btnPrevious.PerformClick();
+
+        }
+
         // close this form
         private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
+
+
     }
 }
