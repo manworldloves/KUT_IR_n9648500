@@ -165,7 +165,7 @@ namespace KUT_IR_n9648500
         // Method to take users query text as input
         // and does various things to it to produce
         // the a query that is input to the searcher
-        public Query PreprocessQuery(string origText, QueryParser parser)
+        private Query PreprocessQuery(string origText, QueryParser parser)
         {
             // builds a boolean query
             // partA is just the original query text

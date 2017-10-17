@@ -32,7 +32,7 @@ namespace KUT_IR_n9648500
             lbSuggestions.Visible = false;
 
             // this button was used for testing purposes
-            btnAutoQuery.Visible = false;
+            btnAutoQuery.Visible = true;
         }
 
         private void chkProcess_CheckedChanged(object sender, EventArgs e)

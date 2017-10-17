@@ -4,7 +4,7 @@ using System.IO; // used for file operations
 
 namespace KUT_IR_n9648500
 {
-    class FileHandling
+    public static class FileHandling
     {
         // reads a text file and returns it as a string
         public static string ReadTextFile(String filename)

@@ -153,7 +153,5 @@ namespace KUT_IR_n9648500
 
             return outString;
         }
-
-
     }
 }
