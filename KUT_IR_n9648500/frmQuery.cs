@@ -61,6 +61,8 @@ namespace KUT_IR_n9648500
                 {
                     Form resultsForm = new frmResults(myIREngine, topicID);
                     resultsForm.Show();
+                    //reset topicID
+                    topicID = "000";
                 }
                 else
                 {
@@ -89,20 +91,28 @@ namespace KUT_IR_n9648500
 				// turn the file into a dictionary
 				Dictionary<string, string> infoNeeds = InfoNeeds.GetInfoNeeds(selectedFile);
 
-				// open form for user to select query
-				frmQuerySelect getQuery = new frmQuerySelect(infoNeeds);
-				
-                // wait for user to select a query
-                getQuery.ShowDialog();
+                // check if infoNeeds is null and report error
+                if (infoNeeds == null)
+                {
+                    MessageBox.Show("That query file is not formatted correctly.");
+                }
+                else
+                {
+                    // open form for user to select query
+                    frmQuerySelect getQuery = new frmQuerySelect(infoNeeds);
 
-				// set the query text if the use has selected a query
-				topicID = getQuery.SelectedTopicID;
-				if (topicID != null)
-				{
-					string stdQueryText = infoNeeds[topicID];
-					txtQuery.Text = stdQueryText;
-                    this.ActiveControl = btnQuery;
-				}
+                    // wait for user to select a query
+                    getQuery.ShowDialog();
+
+                    // set the query text if the use has selected a query
+                    topicID = getQuery.SelectedTopicID;
+                    if (topicID != null)
+                    {
+                        string stdQueryText = infoNeeds[topicID];
+                        txtQuery.Text = stdQueryText;
+                        this.ActiveControl = btnQuery;
+                    }
+                }
             }
             else
             {

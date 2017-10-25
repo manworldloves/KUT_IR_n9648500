@@ -16,16 +16,25 @@ namespace KUT_IR_n9648500
             string[] delims = { ".I", ".D" };
             string[] docParts = document.Split(delims, StringSplitOptions.RemoveEmptyEntries);
 
-            // build dicationary from string array
-            for (int i = 0; i < docParts.Length; i++)
+            if (docParts.Length > 2)
             {
-                iNeeds.Add(docParts[i].Trim(), docParts[i + 1].Trim());
+                // build dicationary from string array
+                for (int i = 0; i < docParts.Length; i++)
+                {
+                    iNeeds.Add(docParts[i].Trim(), docParts[i + 1].Trim());
 
-                // inc i so that it goes up 2 each iteration
-                i++;
+                    // inc i so that it goes up 2 each iteration
+                    i++;
+                }
+
+                return iNeeds;
             }
-
-            return iNeeds;
+            else
+            {
+                return null;
+            }
+            
+            
         }
     }
 }
